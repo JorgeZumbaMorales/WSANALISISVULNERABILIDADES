@@ -1,0 +1,18 @@
+[
+    {
+        "ip": "(192.168.1.1)",
+        "puertos_abiertos": [],
+        "sistema_operativo": "Desconocido",
+        "mac_address": "No disponible",
+        "latencia": "No disponible",
+        "servicios": []
+    },
+    {
+        "ip": "(192.168.1.36)",
+        "puertos_abiertos": [],
+        "sistema_operativo": "Desconocido",
+        "mac_address": "No disponible",
+        "latencia": "No disponible",
+        "servicios": []
+    }
+]
