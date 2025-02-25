@@ -6,7 +6,8 @@ import json
 from arp_scan_utils import escanear_red
 from scapy_utils import procesar_y_guardar_nmap  
 
-NMAP_DB_PATH = "/usr/share/nmap/nmap-os-db"
+NMAP_DB_PATH = "datos/nmap-os-db"  # Ruta relativa dentro de tu proyecto
+
 
 def verificar_instalacion(comando):
     """Verifica si un comando está instalado en el sistema."""

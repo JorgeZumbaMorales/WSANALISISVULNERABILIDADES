@@ -5,14 +5,13 @@ from app.core.respuestas import respuesta_exitosa
 from app.esquemas.dispositivo_esquemas import (
     DispositivoCrear, 
     DispositivoActualizar, 
-    DispositivoActualizarEstado
+    IpAsignacionCrear
 )
 from app.servicios.dispositivo_servicio import (
     crear_dispositivo,
     listar_dispositivos,
-    actualizar_dispositivo,
-    actualizar_estado_dispositivo,
-    eliminar_dispositivo
+    asignar_ip,
+    obtener_historial_ips
 )
 
 router = APIRouter(
@@ -30,16 +29,11 @@ def listar_dispositivos_endpoint(db: Session = Depends(obtener_bd)):
     dispositivos = listar_dispositivos(db)
     return respuesta_exitosa("Lista de dispositivos obtenida exitosamente", dispositivos)
 
-@router.put("/actualizar_dispositivo/{dispositivo_id}")
-def actualizar_dispositivo_endpoint(dispositivo_id: int, datos_dispositivo: DispositivoActualizar, db: Session = Depends(obtener_bd)):
-    dispositivo = actualizar_dispositivo(dispositivo_id, datos_dispositivo, db)
-    return respuesta_exitosa("Dispositivo actualizado exitosamente", dispositivo)
+@router.post("/asignar_ip")
+def asignar_ip_endpoint(datos_ip: IpAsignacionCrear, db: Session = Depends(obtener_bd)):
+    return asignar_ip(datos_ip, db)
 
-@router.put("/actualizar_estado_dispositivo/{dispositivo_id}")
-def actualizar_estado_dispositivo_endpoint(dispositivo_id: int, datos_estado: DispositivoActualizarEstado, db: Session = Depends(obtener_bd)):
-    dispositivo = actualizar_estado_dispositivo(dispositivo_id, datos_estado.estado, db)
-    return respuesta_exitosa("Estado del dispositivo actualizado exitosamente", dispositivo)
-
-@router.delete("/eliminar_dispositivo/{dispositivo_id}")
-def eliminar_dispositivo_endpoint(dispositivo_id: int, db: Session = Depends(obtener_bd)):
-    return eliminar_dispositivo(dispositivo_id, db)
+@router.get("/historial_ips/{dispositivo_id}")
+def historial_ips_endpoint(dispositivo_id: int, db: Session = Depends(obtener_bd)):
+    historial = obtener_historial_ips(dispositivo_id, db)
+    return respuesta_exitosa("Historial de IPs obtenido exitosamente", historial)
