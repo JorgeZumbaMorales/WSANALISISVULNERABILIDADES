@@ -1,21 +1,21 @@
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, Field
 from typing import Optional
 
 class UsuarioCrear(BaseModel):
-    nombre_usuario: str
-    contrasena: str
-    nombres_completos: str
-    apellidos_completos: str
+    nombre_usuario: str = Field(..., min_length=4, max_length=50, pattern="^[a-zA-Z0-9_]+$")
+    contrasena: str = Field(..., min_length=8, max_length=50)
+    nombres_completos: str = Field(..., min_length=2, max_length=100)
+    apellidos_completos: str = Field(..., min_length=2, max_length=100)
     email: EmailStr
-    telefono: Optional[str] = None
+    telefono: Optional[str] = Field(None, pattern="^[0-9]{10,15}$")  # Solo números de 10 a 15 dígitos
 
 class UsuarioActualizar(BaseModel):
-    nombre_usuario: Optional[str] = None
-    contrasena: Optional[str] = None
-    nombres_completos: Optional[str] = None
-    apellidos_completos: Optional[str] = None
+    nombre_usuario: Optional[str] = Field(None, min_length=4, max_length=50, pattern="^[a-zA-Z0-9_]+$")
+    contrasena: Optional[str] = Field(None, min_length=8, max_length=50)
+    nombres_completos: Optional[str] = Field(None, min_length=2, max_length=100)
+    apellidos_completos: Optional[str] = Field(None, min_length=2, max_length=100)
     email: Optional[EmailStr] = None
-    telefono: Optional[str] = None
+    telefono: Optional[str] = Field(None, pattern="^[0-9]{10,15}$")
 
 class UsuarioActualizarEstado(BaseModel):
     estado: bool

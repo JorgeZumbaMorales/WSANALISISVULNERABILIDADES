@@ -4,16 +4,16 @@ from app.core.base_datos import obtener_bd
 from app.core.respuestas import excepcion_no_encontrado, respuesta_exitosa
 from app.esquemas.usuario_esquemas import UsuarioCrear, UsuarioActualizar, UsuarioActualizarEstado
 from app.servicios.usuario_servicio import crear_usuario, listar_usuarios, actualizar_usuario, actualizar_estado_usuario, eliminar_usuario
-
+from app.transacciones.transaccion_usuario_rol import crear_usuario_con_rol
 router = APIRouter(
     prefix="/usuarios",
     tags=["Usuarios"]
 )
 
 @router.post("/crear_usuario")
-def crear_usuario_endpoint(datos_usuario: UsuarioCrear, db: Session = Depends(obtener_bd)):
-    usuario = crear_usuario(datos_usuario, db)
-    return respuesta_exitosa("Usuario creado exitosamente", usuario)
+def crear_usuario_endpoint(datos_usuario: UsuarioCrear, rol_id: int, db: Session = Depends(obtener_bd)):
+    resultado = crear_usuario_con_rol(datos_usuario, rol_id, db)
+    return respuesta_exitosa("Usuario y rol asignado correctamente", resultado)
 
 @router.get("/listar_usuarios")
 def listar_usuarios_endpoint(db: Session = Depends(obtener_bd)):
