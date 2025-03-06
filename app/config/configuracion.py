@@ -8,3 +8,11 @@ URL_BASE_DATOS = "postgresql://jorgezumbamorales:Espoch1.@localhost:5432/web_app
 
 # 🌍 Configuraciones generales
 MODO_DEPURACION = True
+
+# 📧 Configuración del correo electrónico
+SERVIDOR_CORREO = "smtp.gmail.com"
+PUERTO_CORREO = 587
+USUARIO_CORREO = "jorgezumba2000@gmail.com"  # Reemplaza con tu correo real
+CONTRASENA_CORREO = "mjqw qwgt udef wqhy"  # Contraseña de aplicación generada
+REMITENTE_CORREO = USUARIO_CORREO  # Usamos el mismo correo como remitente
+
