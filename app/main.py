@@ -22,6 +22,9 @@ from app.rutas.ruta_herramienta import router as herramienta_router
 from app.rutas.ruta_parametro import router as parametro_router
 from app.rutas.ruta_herramienta_parametro import router as herramienta_parametro_router
 from app.rutas.ruta_seccion import router as seccion_router
+from app.rutas.ruta_puerto_abierto import router as puerto_abierto_router
+from app.rutas.ruta_sistema_operativo import router as sistema_operativo_router
+from app.rutas.ruta_autenticacion import router as autenticacion_router
 app = FastAPI(
     title="API de Gestión y Seguridad",
     description="Esta API gestiona usuarios, dispositivos, vulnerabilidades y más.",
@@ -51,6 +54,9 @@ app.include_router(herramienta_router)
 app.include_router(parametro_router)
 app.include_router(herramienta_parametro_router)
 app.include_router(seccion_router)
+app.include_router(puerto_abierto_router)
+app.include_router(sistema_operativo_router)
+app.include_router(autenticacion_router)
 
 app.add_middleware(
     CORSMiddleware,

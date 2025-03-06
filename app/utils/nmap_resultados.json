@@ -1,21 +1,14 @@
 [
     {
         "ip": "192.168.1.1",
-        "mac": "60:83:e7:b9:ce:78",
-        "fabricante": "TP-LINK CORPORATION PTE. LTD.",
+        "mac": "a8:bf:3c:18:37:5d",
+        "fabricante": "HDV Phoelectron Technology Limited",
         "sistemas_operativos": [
-            "Linux 3.10 - 4.11 (96%)",
-            "Asus RT-AC66U WAP (96%)",
-            "Linux 4.4 (95%)"
+            "MikroTik RouterOS 6.15 (Linux 3.3.5) (86%)",
+            "Tomato 1.27 - 1.28 (Linux 2.4.20) (85%)"
         ],
-        "fingerprint": "OS:SCAN(V=7.94SVN%E=4%D=2/24%OT=22%CT=7%CU=40192%PV=Y%DS=1%DC=D%G=Y%M=6083E\nOS:7%TM=67BD2B33%P=x86_64-pc-linux-gnu)SEQ(SP=106%GCD=1%ISR=10A%TI=Z%CI=I%I\nOS:I=I%TS=7)OPS(O1=M5B4NNT11NW4%O2=M5B4NNT11NW4%O3=M5B4NNT11NW4%O4=M5B4NNT1\nOS:1NW4%O5=M5B4NNT11NW4%O6=M5B4NNT11)WIN(W1=7120%W2=7120%W3=7120%W4=7120%W5\nOS:=7120%W6=7120)ECN(R=Y%DF=Y%T=40%W=7210%O=M5B4NW4%CC=Y%Q=)T1(R=Y%DF=Y%T=4\nOS:0%S=O%A=S+%F=AS%RD=0%Q=)T2(R=N)T3(R=N)T4(R=Y%DF=Y%T=40%W=0%S=A%A=Z%F=R%O\nOS:=%RD=0%Q=)T5(R=Y%DF=Y%T=40%W=0%S=Z%A=S+%F=AR%O=%RD=0%Q=)T6(R=Y%DF=Y%T=40\nOS:%W=0%S=A%A=Z%F=R%O=%RD=0%Q=)T7(R=N)U1(R=Y%DF=N%T=40%IPL=164%UN=0%RIPL=G%\nOS:RID=G%RIPCK=G%RUCK=G%RUD=G)IE(R=Y%DFI=N%T=40%CD=S)\n\nNetwork Distance: 1 hop\nService Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel, cpe:/o:linux:linux_kernel:3.18.21\n\nOS and Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .\nNmap done: 1 IP address (1 host up) scanned in 83.04 seconds",
+        "fingerprint": "No disponible",
         "puertos_abiertos": [
-            {
-                "puerto": 22,
-                "protocolo": "tcp",
-                "servicio": "ssh",
-                "version": "Dropbear sshd 2020.80 (protocol 2.0)"
-            },
             {
                 "puerto": 23,
                 "protocolo": "tcp",
@@ -26,19 +19,19 @@
                 "puerto": 53,
                 "protocolo": "tcp",
                 "servicio": "domain",
-                "version": "dnsmasq 2.85"
+                "version": "dnsmasq 2.55"
             },
             {
                 "puerto": 80,
                 "protocolo": "tcp",
                 "servicio": "http",
-                "version": "No detectada"
+                "version": "GoAhead WebServer"
             },
             {
-                "puerto": 1900,
+                "puerto": 443,
                 "protocolo": "tcp",
-                "servicio": "upnp",
-                "version": "Portable SDK for UPnP devices 1.6.19 (Linux 3.18.21; UPnP 1.0)"
+                "servicio": "ssl",
+                "version": "/http GoAhead WebServer"
             },
             {
                 "puerto": 53,
@@ -47,16 +40,26 @@
                 "version": "No detectada"
             },
             {
-                "puerto": 1900,
+                "puerto": 67,
                 "protocolo": "udp",
-                "servicio": "upnp",
+                "servicio": "dhcps",
                 "version": "No detectada"
             }
         ]
     },
     {
+        "ip": "192.168.1.7",
+        "mac": "0c:ee:99:68:eb:2b",
+        "fabricante": "Amazon Technologies Inc.",
+        "sistemas_operativos": [
+            "Desconocido"
+        ],
+        "fingerprint": "No disponible",
+        "puertos_abiertos": []
+    },
+    {
         "ip": "192.168.1.4",
-        "mac": "5a:b1:fd:96:c5:45",
+        "mac": "46:67:0c:46:aa:cd",
         "fabricante": "Desconocido",
         "sistemas_operativos": [
             "Desconocido"
@@ -65,67 +68,9 @@
         "puertos_abiertos": []
     },
     {
-        "ip": "192.168.1.10",
-        "mac": "94:08:53:41:2b:f3",
-        "fabricante": "Liteon Technology Corporation",
-        "sistemas_operativos": [
-            "Microsoft Windows XP SP3 (87%)"
-        ],
-        "fingerprint": "No disponible",
-        "puertos_abiertos": [
-            {
-                "puerto": 5357,
-                "protocolo": "tcp",
-                "servicio": "http",
-                "version": "Microsoft HTTPAPI httpd 2.0 (SSDP/UPnP)"
-            },
-            {
-                "puerto": 137,
-                "protocolo": "udp",
-                "servicio": "netbios-ns",
-                "version": "No detectada"
-            }
-        ]
-    },
-    {
-        "ip": "192.168.1.3",
-        "mac": "10:3d:0a:32:e5:38",
-        "fabricante": "Hui Zhou Gaoshengda Technology Co.,LTD",
-        "sistemas_operativos": [
-            "Desconocido"
-        ],
-        "fingerprint": "No disponible",
-        "puertos_abiertos": [
-            {
-                "puerto": 8008,
-                "protocolo": "tcp",
-                "servicio": "http",
-                "version": "?"
-            },
-            {
-                "puerto": 8009,
-                "protocolo": "tcp",
-                "servicio": "ssl",
-                "version": "/ajp13?"
-            },
-            {
-                "puerto": 8443,
-                "protocolo": "tcp",
-                "servicio": "ssl",
-                "version": "/https-alt?"
-            },
-            {
-                "puerto": 5353,
-                "protocolo": "udp",
-                "servicio": "zeroconf",
-                "version": "No detectada"
-            }
-        ]
-    },
-    {
-        "ip": "192.168.1.9",
-        "mac": "f0:0f:ec:28:43:5b",
-        "fabricante": "HUAWEI TECHNOLOGIES CO.,LTD",
+        "ip": "192.168.1.95",
+        "mac": "f2:c2:dc:ab:1a:03",
+        "fabricante": "Desconocido",
         "sistemas_operativos": [
             "Desconocido"
         ],
@@ -133,9 +78,9 @@
         "puertos_abiertos": []
     },
     {
-        "ip": "192.168.1.9",
-        "mac": "f0:0f:ec:28:43:5b",
-        "fabricante": "HUAWEI TECHNOLOGIES CO.,LTD",
+        "ip": "192.168.1.96",
+        "mac": "f6:d8:20:e2:bf:60",
+        "fabricante": "Desconocido",
         "sistemas_operativos": [
             "Desconocido"
         ],
@@ -143,8 +88,18 @@
         "puertos_abiertos": []
     },
     {
-        "ip": "192.168.1.2",
-        "mac": "2e:f7:d9:e3:4d:34",
+        "ip": "192.168.1.17",
+        "mac": "02:55:0e:a9:8b:74",
+        "fabricante": "Desconocido",
+        "sistemas_operativos": [
+            "Desconocido"
+        ],
+        "fingerprint": "No disponible",
+        "puertos_abiertos": []
+    },
+    {
+        "ip": "192.168.1.86",
+        "mac": "e2:54:31:45:a4:2a",
         "fabricante": "Desconocido",
         "sistemas_operativos": [
             "Desconocido"

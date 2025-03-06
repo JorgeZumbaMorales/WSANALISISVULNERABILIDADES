@@ -4,6 +4,7 @@ from sqlalchemy.exc import IntegrityError
 from app.modelos.usuario import Usuario
 from app.esquemas.usuario_esquemas import UsuarioCrear, UsuarioActualizar, UsuarioActualizarEstado
 from fastapi import HTTPException
+from app.esquemas.usuario_esquemas import UsuarioLogin
 
 def encriptar_contrasena(contrasena: str) -> str:
     """Hashea la contraseña antes de guardarla en la base de datos."""
@@ -112,3 +113,19 @@ def eliminar_usuario(usuario_id: int, db: Session):
 
 def listar_usuarios(db: Session):
     return db.query(Usuario).all()
+
+def verificar_credenciales(db: Session, datos: UsuarioLogin):
+    """Verifica si el usuario y la contraseña son correctos."""
+    usuario = db.query(Usuario).filter(Usuario.nombre_usuario == datos.nombre_usuario).first()
+    
+    if not usuario:
+        raise HTTPException(status_code=400, detail="Credenciales incorrectas")
+
+    if not usuario.estado:
+        raise HTTPException(status_code=403, detail="Cuenta desactivada")
+
+    # Comparar contraseña ingresada con la contraseña hasheada en la BD
+    if not bcrypt.checkpw(datos.contrasena.encode('utf-8'), usuario.contrasena.encode('utf-8')):
+        raise HTTPException(status_code=400, detail="Credenciales incorrectas")
+
+    return usuario  # Si pasa todas las verificaciones, devuelve el usuario

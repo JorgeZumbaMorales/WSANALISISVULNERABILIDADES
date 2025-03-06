@@ -1,6 +1,9 @@
 from pydantic import BaseModel, EmailStr, Field
 from typing import Optional
 
+class UsuarioLogin(BaseModel):
+    nombre_usuario: str = Field(..., min_length=4, max_length=50, example="admin")
+    contrasena: str = Field(..., min_length=8, max_length=50, example="password123")
 class UsuarioCrear(BaseModel):
     nombre_usuario: str = Field(..., min_length=4, max_length=50, pattern="^[a-zA-Z0-9_]+$")
     contrasena: str = Field(..., min_length=8, max_length=50)

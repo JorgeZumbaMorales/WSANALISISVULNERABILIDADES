@@ -1,9 +1,11 @@
-# app/core/base_datos.py
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.exc import OperationalError
-from app.config.bd_configuracion import URL_BASE_DATOS
 from app.core.respuestas import excepcion_conexion_bd, excepcion_error_bd
+from app.config.configuracion import URL_BASE_DATOS
+
+if not URL_BASE_DATOS:
+    raise ValueError("⚠️ ERROR: La variable URL_BASE_DATOS no está definida en configuracion.py")
 
 try:
     # Crear el motor de la base de datos

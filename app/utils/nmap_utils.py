@@ -3,7 +3,6 @@ import shutil
 import re
 import requests
 import json
-from arp_scan_utils import escanear_red
 from scapy_utils import procesar_y_guardar_nmap  
 
 NMAP_DB_PATH = "datos/nmap-os-db"  # Ruta relativa dentro de tu proyecto
@@ -92,7 +91,7 @@ def escanear_dispositivo(ip, mac):
     }
 
 if __name__ == "__main__":
-    dispositivos_activos = escanear_red()
+
     resultados = []
 
     for dispositivo in dispositivos_activos:
