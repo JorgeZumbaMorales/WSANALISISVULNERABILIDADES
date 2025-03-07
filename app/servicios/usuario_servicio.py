@@ -71,10 +71,9 @@ def actualizar_usuario(usuario_id: int, datos_usuario: UsuarioActualizar, db: Se
         if db.query(Usuario).filter(Usuario.telefono == datos_usuario.telefono).first():
             raise HTTPException(status_code=400, detail="El número de teléfono ya está en uso.")
 
+    # 🔹 Se actualizan todos los campos EXCEPTO la contraseña
     if datos_usuario.nombre_usuario:
         usuario_existente.nombre_usuario = datos_usuario.nombre_usuario
-    if datos_usuario.contrasena:
-        usuario_existente.contrasena = encriptar_contrasena(datos_usuario.contrasena)
     if datos_usuario.nombres_completos:
         usuario_existente.nombres_completos = datos_usuario.nombres_completos
     if datos_usuario.apellidos_completos:
@@ -87,6 +86,7 @@ def actualizar_usuario(usuario_id: int, datos_usuario: UsuarioActualizar, db: Se
     db.commit()
     db.refresh(usuario_existente)
     return usuario_existente
+
 
 
 def actualizar_estado_usuario(usuario_id: int, datos_estado: UsuarioActualizarEstado, db: Session):
@@ -110,6 +110,29 @@ def eliminar_usuario(usuario_id: int, db: Session):
     return {"message": "Usuario eliminado exitosamente"}
 
 
+def buscar_usuario_por_nombre(db: Session, nombre_usuario: str):
+    """
+    Busca un usuario en la base de datos por su nombre de usuario.
+    Retorna el usuario si existe, o lanza un error 404 si no se encuentra.
+    """
+    usuario = db.query(Usuario).filter(Usuario.nombre_usuario == nombre_usuario).first()
+    
+    if not usuario:
+        raise HTTPException(status_code=404, detail="Usuario no encontrado")
+    
+    return usuario
+
+def buscar_usuario_por_correo(db: Session, correo: str):
+    """
+    Busca un usuario en la base de datos por su correo electrónico.
+    Retorna el usuario si existe, o lanza un error 404 si no se encuentra.
+    """
+    usuario = db.query(Usuario).filter(Usuario.email == correo).first()
+    
+    if not usuario:
+        raise HTTPException(status_code=404, detail="Correo no encontrado")
+    
+    return usuario
 
 def listar_usuarios(db: Session):
     return db.query(Usuario).all()
@@ -129,3 +152,20 @@ def verificar_credenciales(db: Session, datos: UsuarioLogin):
         raise HTTPException(status_code=400, detail="Credenciales incorrectas")
 
     return usuario  # Si pasa todas las verificaciones, devuelve el usuario
+
+def actualizar_contrasena_usuario(db: Session, usuario_id: int, nueva_contrasena: str):
+    """
+    📌 Actualiza solo la contraseña de un usuario.
+    """
+    usuario = db.query(Usuario).filter(Usuario.usuario_id == usuario_id).first()
+
+    if not usuario:
+        raise HTTPException(status_code=404, detail="Usuario no encontrado")
+
+    # Encriptar la nueva contraseña antes de guardarla
+    usuario.contrasena = encriptar_contrasena(nueva_contrasena)
+
+    db.commit()
+    db.refresh(usuario)
+
+    return {"message": "Contraseña actualizada correctamente"}

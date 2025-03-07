@@ -14,7 +14,6 @@ class UsuarioCrear(BaseModel):
 
 class UsuarioActualizar(BaseModel):
     nombre_usuario: Optional[str] = Field(None, min_length=4, max_length=50, pattern="^[a-zA-Z0-9_]+$")
-    contrasena: Optional[str] = Field(None, min_length=8, max_length=50)
     nombres_completos: Optional[str] = Field(None, min_length=2, max_length=100)
     apellidos_completos: Optional[str] = Field(None, min_length=2, max_length=100)
     email: Optional[EmailStr] = None
@@ -33,5 +32,8 @@ class UsuarioRespuesta(BaseModel):
     fecha_creacion: str
     estado: bool
 
+class UsuarioActualizarContrasena(BaseModel):
+    usuario_id: int
+    nueva_contrasena: str = Field(..., min_length=8, max_length=50, example="NuevaContrasena123")
     class Config:
         from_attributes = True

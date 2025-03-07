@@ -2,8 +2,8 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 from app.core.base_datos import obtener_bd
 from app.core.respuestas import excepcion_no_encontrado, respuesta_exitosa
-from app.esquemas.usuario_esquemas import UsuarioCrear, UsuarioActualizar, UsuarioActualizarEstado
-from app.servicios.usuario_servicio import crear_usuario, listar_usuarios, actualizar_usuario, actualizar_estado_usuario, eliminar_usuario
+from app.esquemas.usuario_esquemas import UsuarioCrear, UsuarioActualizar, UsuarioActualizarEstado, UsuarioActualizarContrasena
+from app.servicios.usuario_servicio import crear_usuario, listar_usuarios, actualizar_usuario, actualizar_estado_usuario, eliminar_usuario,buscar_usuario_por_nombre, buscar_usuario_por_correo, actualizar_contrasena_usuario
 from app.transacciones.transaccion_usuario_rol import crear_usuario_con_rol
 router = APIRouter(
     prefix="/usuarios",
@@ -38,3 +38,27 @@ def actualizar_estado_usuario_endpoint(usuario_id: int, datos_estado: UsuarioAct
 def eliminar_usuario_endpoint(usuario_id: int, db: Session = Depends(obtener_bd)):
     eliminar_usuario(usuario_id, db)
     return respuesta_exitosa("Usuario eliminado exitosamente")
+
+@router.get("/buscar_por_nombre/{nombre_usuario}")
+def buscar_usuario_por_nombre_endpoint(nombre_usuario: str, db: Session = Depends(obtener_bd)):
+    """
+    📌 Endpoint para buscar un usuario por su nombre de usuario.
+    """
+    usuario = buscar_usuario_por_nombre(db, nombre_usuario)
+    return respuesta_exitosa("Usuario encontrado exitosamente", usuario)
+
+@router.get("/buscar_por_correo/{correo}")
+def buscar_usuario_por_correo_endpoint(correo: str, db: Session = Depends(obtener_bd)):
+    """
+    📌 Endpoint para buscar un usuario por su correo electrónico.
+    """
+    usuario = buscar_usuario_por_correo(db, correo)
+    return respuesta_exitosa("Usuario encontrado exitosamente", usuario)
+
+@router.put("/actualizar_contrasena")
+def actualizar_contrasena_endpoint(datos: UsuarioActualizarContrasena, db: Session = Depends(obtener_bd)):
+    """
+    📌 Endpoint para actualizar solo la contraseña de un usuario.
+    """
+    resultado = actualizar_contrasena_usuario(db, datos.usuario_id, datos.nueva_contrasena)
+    return respuesta_exitosa("Contraseña actualizada exitosamente", resultado)

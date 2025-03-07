@@ -36,3 +36,5 @@ class ServicioCorreo:
         except Exception as error:
             print(f"❌ Error al enviar el correo: {error}")
             return {"estado": "error", "mensaje": str(error)}
+        
+        
