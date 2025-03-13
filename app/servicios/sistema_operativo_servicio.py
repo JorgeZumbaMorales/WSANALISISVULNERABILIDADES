@@ -36,3 +36,10 @@ def eliminar_sistema_operativo(so_id: int, db: Session):
     db.delete(so_existente)
     db.commit()
     return {"message": "Sistema operativo eliminado exitosamente"}
+
+def obtener_sistema_operativo_por_nombre(db: Session, nombre_so: str):
+    """
+    🔹 Busca un sistema operativo en la base de datos por su nombre.
+    Si no existe, devuelve `None`.
+    """
+    return db.query(SistemaOperativo).filter(SistemaOperativo.nombre_so.ilike(nombre_so)).first()

@@ -9,6 +9,9 @@ class DispositivoActualizar(BaseModel):
     nombre_dispositivo: Optional[str] = Field(None, example="Servidor Actualizado")
     estado: Optional[bool]
 
+class DispositivoActualizarEstado(BaseModel):
+    estado: bool = Field(..., example=True)
+
 class DispositivoRespuesta(BaseModel):
     dispositivo_id: int
     nombre_dispositivo: Optional[str]
@@ -18,3 +21,4 @@ class DispositivoRespuesta(BaseModel):
 
     class Config:
         from_attributes = True
+

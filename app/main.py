@@ -15,18 +15,14 @@ from app.rutas.ruta_canal_alerta import router as canal_alerta_router
 from app.rutas.ruta_notificacion import router as notificacion_router
 from app.rutas.ruta_tipo_reporte import router as tipo_reporte_router
 from app.rutas.ruta_reporte_generado import router as reporte_generado_router
-from app.rutas.ruta_politica import router as politica_router
-from app.rutas.ruta_regla import router as regla_router
-from app.rutas.ruta_politica_regla import router as politica_regla_router
-from app.rutas.ruta_herramienta import router as herramienta_router
-from app.rutas.ruta_parametro import router as parametro_router
-from app.rutas.ruta_herramienta_parametro import router as herramienta_parametro_router
 from app.rutas.ruta_seccion import router as seccion_router
 from app.rutas.ruta_puerto_abierto import router as puerto_abierto_router
 from app.rutas.ruta_sistema_operativo import router as sistema_operativo_router
 from app.rutas.ruta_autenticacion import router as autenticacion_router
 from app.rutas.ruta_correo import router as correo_router 
 from app.rutas.ruta_recuperacion_contrasena import router as recuperacion_contrasena_router
+from app.rutas.ruta_configuracion_escaneo import router as configuracion_escaneo_router
+from app.rutas.ruta_tipos_escaneo import router as tipo_escaneo_router
 app = FastAPI(
     title="API de Gestión y Seguridad",
     description="Esta API gestiona usuarios, dispositivos, vulnerabilidades y más.",
@@ -49,18 +45,14 @@ app.include_router(canal_alerta_router)
 app.include_router(notificacion_router)
 app.include_router(tipo_reporte_router)
 app.include_router(reporte_generado_router)
-app.include_router(politica_router)
-app.include_router(regla_router)
-app.include_router(politica_regla_router)
-app.include_router(herramienta_router)
-app.include_router(parametro_router)
-app.include_router(herramienta_parametro_router)
 app.include_router(seccion_router)
 app.include_router(puerto_abierto_router)
 app.include_router(sistema_operativo_router)
 app.include_router(autenticacion_router)
 app.include_router(correo_router)
 app.include_router(recuperacion_contrasena_router)
+app.include_router(configuracion_escaneo_router)
+app.include_router(tipo_escaneo_router)
 
 app.add_middleware(
     CORSMiddleware,

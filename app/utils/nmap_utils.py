@@ -1,103 +1,110 @@
 import subprocess
-import shutil
-import re
-import requests
 import json
-from scapy_utils import procesar_y_guardar_nmap  
+import re
+import os
+import socket
+import struct
+import fcntl
 
-NMAP_DB_PATH = "datos/nmap-os-db"  # Ruta relativa dentro de tu proyecto
 
 
-def verificar_instalacion(comando):
-    """Verifica si un comando está instalado en el sistema."""
-    return shutil.which(comando) is not None
-
-def obtener_fabricante(mac):
-    """Obtiene el fabricante del dispositivo usando una API externa."""
+def obtener_red_local():
+    """ Detecta automáticamente la red local en la que se encuentra el equipo """
     try:
-        url = f"https://api.macvendors.com/{mac}"
-        response = requests.get(url)
-        return response.text if response.status_code == 200 else "Desconocido"
-    except:
-        return "Desconocido"
+        # Obtener la dirección IP local usando socket
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s.connect(("8.8.8.8", 80))  # Conectar a un servidor externo para determinar la interfaz activa
+        ip_local = s.getsockname()[0]
+        s.close()
 
-def escanear_tcp(ip):
-    """Escanea los puertos TCP más comunes, detectando servicios y versiones."""
-    print(f"🔍 Escaneando TCP en {ip} con detección de versiones de servicio...")
-    resultado = subprocess.run(
-        ["sudo", "nmap", "-sS", "-sV", "--top-ports", "100", "-O", "--osscan-guess", "--max-os-tries", "1", ip],  
-        text=True,
-        capture_output=True
-    )
-    return resultado.stdout if resultado.returncode == 0 else None
+        # Usar el comando `ip -o -f inet addr show` para obtener la máscara de subred
+        resultado = subprocess.run(
+            ["ip", "-o", "-f", "inet", "addr", "show"],
+            capture_output=True,
+            text=True
+        )
+        salida = resultado.stdout
 
-def escanear_udp(ip):
-    """Escanea los puertos UDP más comunes."""
-    print(f"🔍 Escaneando UDP en {ip}...")
-    resultado = subprocess.run(
-        ["sudo", "nmap", "-sU", "--top-ports", "50", ip],  
-        text=True,
-        capture_output=True
-    )
-    return resultado.stdout if resultado.returncode == 0 else None
+        # Buscar la línea que contenga nuestra IP
+        for linea in salida.split("\n"):
+            if ip_local in linea:
+                match = re.search(r"(\d+\.\d+\.\d+\.\d+)/(\d+)", linea)
+                if match:
+                    ip_base, prefijo = match.groups()
+                    red = ".".join(ip_base.split(".")[:3]) + ".0"
+                    red_cidr = f"{red}/{prefijo}"
+                    print(f"[INFO] Red detectada automáticamente: {red_cidr}")
+                    return red_cidr
 
-def analizar_salida_nmap(salida):
-    """Analiza la salida de Nmap y extrae información detallada sobre los servicios."""
-    if not salida:
-        return [], "No disponible", []
+        raise Exception("No se pudo determinar la máscara de subred.")
 
-    so_match = re.findall(r"Aggressive OS guesses: (.+)", salida)
-    sistemas_operativos = so_match[0].split(", ")[:3] if so_match else ["Desconocido"]
-
-    fingerprint_match = re.search(r"TCP/IP fingerprint:\n(.*)", salida, re.DOTALL)
-    fingerprint = fingerprint_match.group(1).strip() if fingerprint_match else "No disponible"
-
-    puertos_abiertos = []
-    for linea in salida.split("\n"):
-        puerto_match = re.match(r"(\d+)/(tcp|udp)\s+open\s+([\w-]+)\s*(.*)", linea)
-        if puerto_match:
-            puertos_abiertos.append({
-                "puerto": int(puerto_match.group(1)),
-                "protocolo": puerto_match.group(2),
-                "servicio": puerto_match.group(3),
-                "version": puerto_match.group(4).strip() if puerto_match.group(4) else "No detectada"
-            })
-
-    return sistemas_operativos, fingerprint, puertos_abiertos
-
-def escanear_dispositivo(ip, mac):
-    """Ejecuta los escaneos de TCP y UDP por separado para optimizar velocidad."""
-    if not verificar_instalacion("nmap"):
-        print("Error: Nmap no está instalado.")
+    except Exception as e:
+        print(f"[ERROR] No se pudo detectar la red: {e}")
         return None
 
-    print(f"🚀 Iniciando escaneo de {ip} (MAC: {mac})...")
+def ejecutar_nmap(archivo_salida="nmap_resultados.json"):
+    red = obtener_red_local()
+    if not red:
+        print("[ERROR] No se puede ejecutar el escaneo sin una red válida.")
+        return None
 
-    fabricante = obtener_fabricante(mac)
+    print(f"[INFO] Ejecutando escaneo Nmap en la red {red}...")
 
-    salida_tcp = escanear_tcp(ip)
-    so_tcp, fingerprint_tcp, puertos_tcp = analizar_salida_nmap(salida_tcp)
+    comando_nmap = f"sudo nmap -sS -sV -O -p- --min-rate 5000 {red}"
 
-    salida_udp = escanear_udp(ip)
-    _, _, puertos_udp = analizar_salida_nmap(salida_udp)
+    try:
+        resultado = subprocess.run(comando_nmap, shell=True, capture_output=True, text=True, check=True)
+        salida_nmap = resultado.stdout
+    except subprocess.CalledProcessError as e:
+        print(f"[ERROR] Error al ejecutar Nmap: {e}")
+        return None
 
-    return {
-        "ip": ip,
-        "mac": mac,
-        "fabricante": fabricante,
-        "sistemas_operativos": so_tcp,
-        "fingerprint": fingerprint_tcp,
-        "puertos_abiertos": puertos_tcp + puertos_udp  
-    }
+    dispositivos = []
+    bloques = salida_nmap.split("Nmap scan report for ")
+
+    for bloque in bloques[1:]:  # Ignorar primera parte vacía
+        lineas = bloque.split("\n")
+
+        # Extraer IP
+        ip_match = re.search(r"(\d+\.\d+\.\d+\.\d+)", lineas[0])
+        ip = ip_match.group(0) if ip_match else "Desconocida"
+
+        # Extraer MAC Address
+        mac_match = re.search(r"MAC Address: ([0-9A-Fa-f:]+)", bloque)
+        mac = mac_match.group(1) if mac_match else "No disponible"
+
+        # Extraer Sistema Operativo
+        os_match = re.search(r"OS details: (.+)", bloque)
+        sistema_operativo = os_match.group(1) if os_match else "No disponible"
+
+        # Extraer Puertos abiertos
+        puertos_abiertos = []
+        for linea in lineas:
+            puerto_match = re.match(r"(\d+)/tcp\s+open\s+(\S+)\s*(.*)", linea)
+            if puerto_match:
+                puerto, servicio, version = puerto_match.groups()
+                puertos_abiertos.append({
+                    "puerto": int(puerto),
+                    "protocolo": "tcp",
+                    "servicio": servicio,
+                    "version": version.strip() if version else "No disponible"
+                })
+
+        # Agregar dispositivo si tiene al menos un puerto abierto
+        if puertos_abiertos:
+            dispositivos.append({
+                "ip_address": ip,
+                "mac_address": mac,
+                "sistema_operativo": sistema_operativo,
+                "puertos_abiertos": puertos_abiertos
+            })
+
+    # Guardar en JSON
+    with open(archivo_salida, "w", encoding="utf-8") as f:
+        json.dump(dispositivos, f, indent=4)
+
+    print(f"[INFO] Resultados guardados en {archivo_salida}")
+    return archivo_salida
 
 if __name__ == "__main__":
-
-    resultados = []
-
-    for dispositivo in dispositivos_activos:
-        info_dispositivo = escanear_dispositivo(dispositivo["ip"], dispositivo["mac"])
-        if info_dispositivo:
-            resultados.append(info_dispositivo)
-
-    # ✅ Ahora llamamos a la función específica para Nmap
-    procesar_y_guardar_nmap(resultados)
+    ejecutar_nmap()

@@ -2,12 +2,13 @@ from sqlalchemy.orm import Session
 from sqlalchemy.orm import joinedload
 from fastapi import HTTPException
 from app.modelos.dispositivo import Dispositivo
-from app.esquemas.dispositivo_esquemas import DispositivoCrear, DispositivoActualizar
+from app.esquemas.dispositivo_esquemas import DispositivoCrear, DispositivoActualizar, DispositivoActualizarEstado
 from app.modelos.dispositivo_sistema_operativo import DispositivoSistemaOperativo
 from app.modelos.sistema_operativo import SistemaOperativo
 from app.modelos.ip_asignaciones import IpAsignacion
 
 def crear_dispositivo(datos_dispositivo: DispositivoCrear, db: Session):
+    print(f"[DEBUG] Tipo de db en crear_dispositivo: {type(db)}")
     dispositivo_existente = db.query(Dispositivo).filter(Dispositivo.mac_address == datos_dispositivo.mac_address).first()
     if dispositivo_existente:
         raise HTTPException(status_code=400, detail="Ya existe un dispositivo con esta MAC")
@@ -17,14 +18,17 @@ def crear_dispositivo(datos_dispositivo: DispositivoCrear, db: Session):
         mac_address=datos_dispositivo.mac_address
     )
     db.add(nuevo_dispositivo)
-    db.commit()
+    db.flush() 
     db.refresh(nuevo_dispositivo)
     return nuevo_dispositivo
 
 def listar_dispositivos(db: Session):
+    print(f"[DEBUG] Tipo de db en crear_dispositivo: {type(db)}")
     return db.query(Dispositivo).all()
 
 def listar_dispositivos_completo(db: Session):
+    print(f"[DEBUG] Tipo de db en crear_dispositivo: {type(db)}")
+
     """
     Obtiene la lista de dispositivos con su sistema operativo y la última IP asignada.
     """
@@ -33,8 +37,7 @@ def listar_dispositivos_completo(db: Session):
     dispositivos_resultado = []
     for dispositivo in dispositivos:
         # Obtener el sistema operativo si existe
-        so = dispositivo.sistema_operativo_relacion[0].sistema_operativo.nombre_so if dispositivo.sistema_operativo_relacion else "Desconocido"
-
+        so = dispositivo.sistema_operativo_relacion.first().sistema_operativo.nombre_so if dispositivo.sistema_operativo_relacion else "Desconocido"
         # Obtener la última IP asignada
         ultima_ip = (
             db.query(IpAsignacion.ip_address)
@@ -53,8 +56,18 @@ def listar_dispositivos_completo(db: Session):
 
     return dispositivos_resultado
 
+def obtener_dispositivo_por_mac(db: Session, mac_address: str):
+    print(f"[DEBUG] Tipo de db en crear_dispositivo: {type(db)}")
+
+    """
+    Busca un dispositivo por su dirección MAC.
+    """
+    return db.query(Dispositivo).filter(Dispositivo.mac_address == mac_address).first()
+
 
 def actualizar_dispositivo(dispositivo_id: int, datos_dispositivo: DispositivoActualizar, db: Session):
+    print(f"[DEBUG] Tipo de db en crear_dispositivo: {type(db)}")
+
     dispositivo_existente = db.query(Dispositivo).filter(Dispositivo.dispositivo_id == dispositivo_id).first()
     if not dispositivo_existente:
         raise HTTPException(status_code=404, detail="Dispositivo no encontrado")
@@ -74,3 +87,25 @@ def eliminar_dispositivo(dispositivo_id: int, db: Session):
     db.delete(dispositivo_existente)
     db.commit()
     return {"message": "Dispositivo eliminado exitosamente"}
+ 
+
+def actualizar_estado_dispositivo(dispositivo_id: int, datos_estado: DispositivoActualizarEstado, db: Session):
+    """
+    Actualiza únicamente el estado de un dispositivo en la base de datos.
+    """
+    print(f"[DEBUG] Actualizando estado del dispositivo {dispositivo_id} a {datos_estado.estado}")
+
+    dispositivo_existente = db.query(Dispositivo).filter(Dispositivo.dispositivo_id == dispositivo_id).first()
+
+    if not dispositivo_existente:
+        raise HTTPException(status_code=404, detail="Dispositivo no encontrado")
+
+    dispositivo_existente.estado = datos_estado.estado  # ✅ Se usa la validación del esquema
+
+    db.commit()
+    db.refresh(dispositivo_existente)
+    
+    print(f"[INFO] Estado del dispositivo {dispositivo_id} actualizado a {datos_estado.estado}")
+    return dispositivo_existente
+
+

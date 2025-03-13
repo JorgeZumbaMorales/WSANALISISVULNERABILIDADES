@@ -13,7 +13,7 @@ def crear_puerto_abierto(datos_puerto: PuertoAbiertoCrear, db: Session):
         estado=datos_puerto.estado
     )
     db.add(nuevo_puerto)
-    db.commit()
+    db.flush()
     db.refresh(nuevo_puerto)
     return nuevo_puerto
 

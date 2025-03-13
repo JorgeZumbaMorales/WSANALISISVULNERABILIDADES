@@ -1,8 +1,0 @@
-ip,mac,fabricante,sistemas_operativos,fingerprint,puertos_abiertos
-192.168.1.1,a8:bf:3c:18:37:5d,HDV Phoelectron Technology Limited,"['MikroTik RouterOS 6.15 (Linux 3.3.5) (86%)', 'Tomato 1.27 - 1.28 (Linux 2.4.20) (85%)']",No disponible,"[{'puerto': 23, 'protocolo': 'tcp', 'servicio': 'telnet', 'version': 'No detectada'}, {'puerto': 53, 'protocolo': 'tcp', 'servicio': 'domain', 'version': 'dnsmasq 2.55'}, {'puerto': 80, 'protocolo': 'tcp', 'servicio': 'http', 'version': 'GoAhead WebServer'}, {'puerto': 443, 'protocolo': 'tcp', 'servicio': 'ssl', 'version': '/http GoAhead WebServer'}, {'puerto': 53, 'protocolo': 'udp', 'servicio': 'domain', 'version': 'No detectada'}, {'puerto': 67, 'protocolo': 'udp', 'servicio': 'dhcps', 'version': 'No detectada'}]"
-192.168.1.7,0c:ee:99:68:eb:2b,Amazon Technologies Inc.,['Desconocido'],No disponible,[]
-192.168.1.4,46:67:0c:46:aa:cd,Desconocido,['Desconocido'],No disponible,[]
-192.168.1.95,f2:c2:dc:ab:1a:03,Desconocido,['Desconocido'],No disponible,[]
-192.168.1.96,f6:d8:20:e2:bf:60,Desconocido,['Desconocido'],No disponible,[]
-192.168.1.17,02:55:0e:a9:8b:74,Desconocido,['Desconocido'],No disponible,[]
-192.168.1.86,e2:54:31:45:a4:2a,Desconocido,['Desconocido'],No disponible,[]
