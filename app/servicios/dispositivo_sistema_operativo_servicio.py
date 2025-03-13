@@ -10,7 +10,7 @@ def crear_dispositivo_sistema_operativo(datos: DispositivoSistemaOperativoCrear,
         estado=datos.estado
     )
     db.add(nuevo_registro)
-    db.commit()
+    db.flush()
     db.refresh(nuevo_registro)
     return nuevo_registro
 

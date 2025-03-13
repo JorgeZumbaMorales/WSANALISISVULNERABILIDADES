@@ -7,7 +7,6 @@ from app.rutas.ruta_rol_seccion_permiso import router as ruta_rol_seccion_permis
 from app.rutas.ruta_rol_usuario import router as rol_usuario_router
 from app.rutas.ruta_dispositivo import router as dispositivo_router
 from app.rutas.ruta_categoria import router as categoria_router
-from app.rutas.ruta_dispositivo_categoria import router as dispositivo_categoria_router
 from app.rutas.ruta_vulnerabilidad import router as vulnerabilidad_router
 from app.rutas.ruta_historial_vulnerabilidad import router as historial_vulnerabilidad_router
 from app.rutas.ruta_tipo_alerta import router as tipo_alerta_router
@@ -37,7 +36,6 @@ app.include_router(ruta_rol_seccion_permiso)
 app.include_router(rol_usuario_router)
 app.include_router(dispositivo_router)
 app.include_router(categoria_router)
-app.include_router(dispositivo_categoria_router)
 app.include_router(vulnerabilidad_router)
 app.include_router(historial_vulnerabilidad_router)
 app.include_router(tipo_alerta_router)

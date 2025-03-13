@@ -17,11 +17,12 @@ from app.servicios.ip_asignacion_servicio import (
 )
 from app.servicios.puerto_abierto_servicio import crear_puerto_abierto
 from app.servicios.sistema_operativo_servicio import obtener_sistema_operativo_por_nombre
+from app.servicios.dispositivo_sistema_operativo_servicio import crear_dispositivo_sistema_operativo
 
 # Importamos los esquemas correctos
 from app.esquemas.dispositivo_esquemas import DispositivoCrear, DispositivoActualizarEstado
 from app.esquemas.puerto_abierto_esquemas import PuertoAbiertoCrear
-
+from app.esquemas.dispositivo_sistema_operativo_esquemas import DispositivoSistemaOperativoCrear
 # Importamos los modelos correctos
 from app.modelos.dispositivo import Dispositivo
 
@@ -72,6 +73,17 @@ def procesar_resultados(db: Session, archivo_json: str):
                     if not dispositivo_bd.estado:
                         actualizar_estado_dispositivo(dispositivo_bd.dispositivo_id, DispositivoActualizarEstado(estado=True), db)
 
+                # **Registrar el sistema operativo en `dispositivo_sistema_operativo`**
+                sistema_operativo = obtener_sistema_operativo_por_nombre(db, so_nombre)
+
+                if sistema_operativo:  # Verificar que el SO existe en la BD
+                    datos_so_dispositivo = DispositivoSistemaOperativoCrear(
+                        dispositivo_id=dispositivo_bd.dispositivo_id,
+                        sistema_operativo_id=sistema_operativo.sistema_operativo_id
+                    )
+                    crear_dispositivo_sistema_operativo(datos_so_dispositivo, db)  # ✅ Insertar en la tabla
+                else:
+                    print(f"[WARN] Sistema operativo '{so_nombre}' no encontrado en la BD.")
                 # **Registrar la IP en `ip_asignaciones` solo si es diferente**
                 ultima_ip = obtener_ultima_ip_dispositivo(db, dispositivo_bd.dispositivo_id)
                 if ultima_ip != ip_actual:

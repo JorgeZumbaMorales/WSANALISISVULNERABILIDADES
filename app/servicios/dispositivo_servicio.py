@@ -27,7 +27,7 @@ def listar_dispositivos(db: Session):
     return db.query(Dispositivo).all()
 
 def listar_dispositivos_completo(db: Session):
-    print(f"[DEBUG] Tipo de db en crear_dispositivo: {type(db)}")
+    print(f"[DEBUG] Tipo de db en listar_dispositivos_completo: {type(db)}")
 
     """
     Obtiene la lista de dispositivos con su sistema operativo y la última IP asignada.
@@ -37,7 +37,12 @@ def listar_dispositivos_completo(db: Session):
     dispositivos_resultado = []
     for dispositivo in dispositivos:
         # Obtener el sistema operativo si existe
-        so = dispositivo.sistema_operativo_relacion.first().sistema_operativo.nombre_so if dispositivo.sistema_operativo_relacion else "Desconocido"
+        if dispositivo.sistema_operativo_relacion:
+            primer_so = dispositivo.sistema_operativo_relacion[0]  # ✅ Acceder al primer SO si existe
+            so = primer_so.sistema_operativo.nombre_so
+        else:
+            so = "Desconocido"
+
         # Obtener la última IP asignada
         ultima_ip = (
             db.query(IpAsignacion.ip_address)
@@ -55,6 +60,7 @@ def listar_dispositivos_completo(db: Session):
         })
 
     return dispositivos_resultado
+
 
 def obtener_dispositivo_por_mac(db: Session, mac_address: str):
     print(f"[DEBUG] Tipo de db en crear_dispositivo: {type(db)}")
