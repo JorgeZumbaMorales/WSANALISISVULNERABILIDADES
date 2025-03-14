@@ -16,3 +16,6 @@ USUARIO_CORREO = "jorgezumba2000@gmail.com"  # Reemplaza con tu correo real
 CONTRASENA_CORREO = "mjqw qwgt udef wqhy"  # Contraseña de aplicación generada
 REMITENTE_CORREO = USUARIO_CORREO  # Usamos el mismo correo como remitente
 
+# 🔮 Configuración de la API de Gemini
+GEMINI_API_KEY = "AIzaSyD37HdnhWkJApLwJK86STk-sQqSMH_9MOU"
+GEMINI_URL = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={GEMINI_API_KEY}"

@@ -13,8 +13,6 @@ class DispositivoSistemaOperativo(Base):
     fecha_creacion = Column(TIMESTAMP, server_default=func.current_timestamp())
     estado = Column(Boolean, default=True)
 
-   
-    dispositivo = relationship("Dispositivo", back_populates="sistema_operativo_relacion")
-
-   
+    # ✅ Evitamos importaciones circulares con strings
+    dispositivo = relationship("Dispositivo", back_populates="sistemas_operativos_relacion")
     sistema_operativo = relationship("SistemaOperativo", back_populates="dispositivos_relacion")

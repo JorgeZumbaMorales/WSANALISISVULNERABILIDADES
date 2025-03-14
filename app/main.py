@@ -22,6 +22,9 @@ from app.rutas.ruta_correo import router as correo_router
 from app.rutas.ruta_recuperacion_contrasena import router as recuperacion_contrasena_router
 from app.rutas.ruta_configuracion_escaneo import router as configuracion_escaneo_router
 from app.rutas.ruta_tipos_escaneo import router as tipo_escaneo_router
+from app.rutas.ruta_riesgo import router as riesgo_router
+from app.rutas.ruta_dispositivo_riesgo import router as dispositivo_riesgo_router
+from app.rutas.ruta_recomendacion_puerto import router as recomendacion_puerto_router
 app = FastAPI(
     title="API de Gestión y Seguridad",
     description="Esta API gestiona usuarios, dispositivos, vulnerabilidades y más.",
@@ -51,6 +54,9 @@ app.include_router(correo_router)
 app.include_router(recuperacion_contrasena_router)
 app.include_router(configuracion_escaneo_router)
 app.include_router(tipo_escaneo_router)
+app.include_router(riesgo_router)
+app.include_router(dispositivo_riesgo_router)
+app.include_router(recomendacion_puerto_router)
 
 app.add_middleware(
     CORSMiddleware,

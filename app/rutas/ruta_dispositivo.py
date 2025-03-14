@@ -10,7 +10,8 @@ from app.servicios.dispositivo_servicio import (
     listar_dispositivos,
     listar_dispositivos_completo,
     actualizar_dispositivo,
-    eliminar_dispositivo
+    eliminar_dispositivo,
+    listar_todos_los_dispositivos_completo
 )
 
 router = APIRouter(
@@ -33,6 +34,10 @@ def listar_dispositivos_completo_endpoint(db: Session = Depends(obtener_bd)):
     dispositivos = listar_dispositivos_completo(db)
     return {"message": "Lista de dispositivos obtenida exitosamente", "data": dispositivos}
 
+@router.get("/listar_todos_los_dispositivos_completo")
+def listar_todos_los_dispositivos_completo_endpoint(db: Session = Depends(obtener_bd)):
+    dispositivos = listar_todos_los_dispositivos_completo(db)
+    return {"message": "Lista completa de dispositivos obtenida exitosamente", "data": dispositivos}
 
 @router.put("/actualizar_dispositivo/{dispositivo_id}")
 def actualizar_dispositivo_endpoint(dispositivo_id: int, datos_dispositivo: DispositivoActualizar, db: Session = Depends(obtener_bd)):
