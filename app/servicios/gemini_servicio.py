@@ -1,27 +1,35 @@
 import requests
+import time
 from fastapi import HTTPException
 from app.config.configuracion import GEMINI_API_KEY, GEMINI_URL
 
-def generar_respuesta_gemini(prompt: str):
-    """📌 Enviar una solicitud a la API de Gemini y devolver la respuesta generada."""
+def generar_respuesta_gemini(prompt: str, max_retries=3):
+    """📌 Enviar una solicitud a la API de Gemini con reintentos en caso de error 429."""
     if not GEMINI_API_KEY:
         raise HTTPException(status_code=500, detail="La API Key de Gemini no está configurada.")
 
     headers = {"Content-Type": "application/json"}
-    data = {
-        "contents": [{"parts": [{"text": prompt}]}]
-    }
+    data = {"contents": [{"parts": [{"text": prompt}]}]}
 
-    try:
-        response = requests.post(GEMINI_URL, json=data, headers=headers)
-        response.raise_for_status()
-        resultado = response.json()
+    for intento in range(1, max_retries + 1):
+        try:
+            response = requests.post(GEMINI_URL, json=data, headers=headers)
+            response.raise_for_status()
+            resultado = response.json()
 
-        # Extraer la respuesta generada por la IA
-        return resultado.get("candidates", [{}])[0].get("content", {}).get("parts", [{}])[0].get("text", "Sin respuesta")
-    
-    except requests.exceptions.RequestException as e:
-        raise HTTPException(status_code=500, detail=f"Error al conectar con Gemini: {str(e)}")
+            # Extraer la respuesta generada por la IA
+            return resultado.get("candidates", [{}])[0].get("content", {}).get("parts", [{}])[0].get("text", "Sin respuesta")
+
+        except requests.exceptions.RequestException as e:
+            if response.status_code == 429:
+                espera = 5 * intento  # 🔄 Espera progresiva: 5s, 10s, 15s...
+                print(f"[WARN] Error 429: Too Many Requests. Reintentando en {espera} segundos...")
+                time.sleep(espera)
+            else:
+                raise HTTPException(status_code=500, detail=f"Error al conectar con Gemini: {str(e)}")
+
+    raise HTTPException(status_code=500, detail="No se pudo obtener respuesta de Gemini tras varios intentos.")
+
 
 
 def analizar_riesgo_ia(puertos):
