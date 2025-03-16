@@ -14,7 +14,7 @@ class Dispositivo(Base):
     estado = Column(Boolean, default=True)
 
     # ✅ Evitamos import circular usando string en vez de import directo
-    sistemas_operativos_relacion = relationship("DispositivoSistemaOperativo", back_populates="dispositivo", lazy="joined")
+    sistema_operativo_relacion = relationship("DispositivoSistemaOperativo", back_populates="dispositivo", lazy="joined")
     
     ips_relacion = relationship("IpAsignacion", back_populates="dispositivo", lazy="joined")
     riesgos_relacion = relationship("DispositivoRiesgo", back_populates="dispositivo", lazy="joined")

@@ -5,7 +5,7 @@ from app.core.base import Base
 
 class Riesgo(Base):
     __tablename__ = 'riesgos'
-    __table_args__ = {'schema': 'gestion_dispositivos'}
+    __table_args__ = {'schema': 'analisis_vulnerabilidades'}
 
     riesgo_id = Column(Integer, primary_key=True, autoincrement=True)
     nombre_riesgo = Column(String(20), unique=True, nullable=False)
@@ -14,4 +14,4 @@ class Riesgo(Base):
     estado = Column(Boolean, default=True)
 
     # ✅ Relación con la tabla dispositivo_riesgo
-    dispositivo_riesgo_relacion = relationship("DispositivoRiesgo", back_populates="riesgo")
+    dispositivo_riesgo_relacion = relationship("DispositivoRiesgo", back_populates="riesgo", lazy="joined")

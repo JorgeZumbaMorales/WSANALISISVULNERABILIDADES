@@ -6,7 +6,10 @@ from app.esquemas.dispositivo_esquemas import DispositivoCrear, DispositivoActua
 from app.modelos.dispositivo_sistema_operativo import DispositivoSistemaOperativo
 from app.modelos.sistema_operativo import SistemaOperativo
 from app.modelos.ip_asignaciones import IpAsignacion
-
+from app.modelos.dispositivo import Dispositivo
+from app.modelos.puerto_abierto import PuertoAbierto
+from app.modelos.dispositivo_riesgo import DispositivoRiesgo
+from app.modelos.riesgo import Riesgo
 def crear_dispositivo(datos_dispositivo: DispositivoCrear, db: Session):
     print(f"[DEBUG] Tipo de db en crear_dispositivo: {type(db)}")
     dispositivo_existente = db.query(Dispositivo).filter(Dispositivo.mac_address == datos_dispositivo.mac_address).first()
@@ -151,3 +154,34 @@ def actualizar_estado_dispositivo(dispositivo_id: int, datos_estado: Dispositivo
     return dispositivo_existente
 
 
+def listar_dispositivos_por_riesgo(db: Session, nivel_riesgo: str):
+    """🔍 Lista los dispositivos con un nivel de riesgo específico."""
+    dispositivos = db.query(
+        Dispositivo.dispositivo_id,
+        Dispositivo.mac_address,
+        Riesgo.nombre_riesgo.label("riesgo"),
+        PuertoAbierto.puerto_id,
+        PuertoAbierto.puerto.label("numero_puerto")
+    ).join(DispositivoRiesgo, Dispositivo.dispositivo_id == DispositivoRiesgo.dispositivo_id)\
+     .join(Riesgo, DispositivoRiesgo.riesgo_id == Riesgo.riesgo_id)\
+     .join(PuertoAbierto, Dispositivo.dispositivo_id == PuertoAbierto.dispositivo_id)\
+     .filter(Riesgo.nombre_riesgo == nivel_riesgo)\
+     .all()
+
+    # Reestructurar la respuesta para agrupar por dispositivos
+    dispositivos_dict = {}
+    for dispositivo in dispositivos:
+        dispositivo_id = dispositivo.dispositivo_id
+        if dispositivo_id not in dispositivos_dict:
+            dispositivos_dict[dispositivo_id] = {
+                "dispositivo_id": dispositivo.dispositivo_id,
+                "mac_address": dispositivo.mac_address,
+                "riesgo": dispositivo.riesgo,
+                "puertos_abiertos": []
+            }
+        dispositivos_dict[dispositivo_id]["puertos_abiertos"].append({
+            "puerto_id": dispositivo.puerto_id,
+            "numero": dispositivo.numero_puerto
+        })
+
+    return {"message": f"Lista de dispositivos con riesgo {nivel_riesgo}", "dispositivos": list(dispositivos_dict.values())}

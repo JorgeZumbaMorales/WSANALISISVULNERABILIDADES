@@ -18,4 +18,5 @@ REMITENTE_CORREO = USUARIO_CORREO  # Usamos el mismo correo como remitente
 
 # 🔮 Configuración de la API de Gemini
 GEMINI_API_KEY = "AIzaSyD37HdnhWkJApLwJK86STk-sQqSMH_9MOU"
+GEMINI_API_KEY_2 = "AIzaSyDoE9e6kOEvXGBO8uweoAKfNi099eNMUzE"
 GEMINI_URL = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={GEMINI_API_KEY}"

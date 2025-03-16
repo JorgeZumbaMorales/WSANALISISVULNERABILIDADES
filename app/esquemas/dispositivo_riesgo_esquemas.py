@@ -12,7 +12,7 @@ class DispositivoRiesgoRespuesta(BaseModel):
     dispositivo_riesgo_id: int
     dispositivo_id: int
     riesgo_id: int
-    fecha_evaluacion: str
+    fecha_creacion: str
     estado: bool
 
     class Config:

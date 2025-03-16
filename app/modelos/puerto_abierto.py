@@ -4,7 +4,7 @@ from app.core.base import Base
 
 class PuertoAbierto(Base):
     __tablename__ = 'puertos_abiertos'
-    __table_args__ = {'schema': 'gestion_dispositivos'}
+    __table_args__ = {'schema': 'analisis_vulnerabilidades'}
 
     puerto_id = Column(Integer, primary_key=True, autoincrement=True)
     dispositivo_id = Column(Integer, ForeignKey('gestion_dispositivos.dispositivos.dispositivo_id'), nullable=False)

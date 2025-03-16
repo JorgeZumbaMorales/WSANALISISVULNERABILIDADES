@@ -1,7 +1,7 @@
 import requests
 import time
 from fastapi import HTTPException
-from app.config.configuracion import GEMINI_API_KEY, GEMINI_URL
+from app.config.configuracion import GEMINI_API_KEY, GEMINI_URL , GEMINI_API_KEY_2
 
 def generar_respuesta_gemini(prompt: str, max_retries=3):
     """📌 Enviar una solicitud a la API de Gemini con reintentos en caso de error 429."""

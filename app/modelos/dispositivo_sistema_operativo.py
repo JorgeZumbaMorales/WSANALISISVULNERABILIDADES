@@ -14,5 +14,5 @@ class DispositivoSistemaOperativo(Base):
     estado = Column(Boolean, default=True)
 
     # ✅ Evitamos importaciones circulares con strings
-    dispositivo = relationship("Dispositivo", back_populates="sistemas_operativos_relacion")
-    sistema_operativo = relationship("SistemaOperativo", back_populates="dispositivos_relacion")
+    dispositivo = relationship("Dispositivo", back_populates="sistema_operativo_relacion", lazy="joined")
+    sistema_operativo = relationship("SistemaOperativo", back_populates="dispositivos_relacion" , lazy="joined")

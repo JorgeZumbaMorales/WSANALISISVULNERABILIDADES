@@ -11,7 +11,8 @@ from app.servicios.dispositivo_servicio import (
     listar_dispositivos_completo,
     actualizar_dispositivo,
     eliminar_dispositivo,
-    listar_todos_los_dispositivos_completo
+    listar_todos_los_dispositivos_completo,
+    listar_dispositivos_por_riesgo
 )
 
 router = APIRouter(
@@ -50,3 +51,8 @@ def actualizar_dispositivo_endpoint(dispositivo_id: int, datos_dispositivo: Disp
 def eliminar_dispositivo_endpoint(dispositivo_id: int, db: Session = Depends(obtener_bd)):
     eliminar_dispositivo(dispositivo_id, db)
     return {"message": "Dispositivo eliminado exitosamente"}
+
+@router.get("/riesgo/{nivel_riesgo}")
+def listar_dispositivos_riesgo_endpoint(nivel_riesgo: str, db: Session = Depends(obtener_bd)):
+    dispositivos = listar_dispositivos_por_riesgo(db, nivel_riesgo)
+    return {"message": f"Lista de dispositivos con riesgo {nivel_riesgo}", "data": dispositivos}
