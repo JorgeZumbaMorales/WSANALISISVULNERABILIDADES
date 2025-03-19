@@ -3,7 +3,8 @@ from sqlalchemy.orm import Session
 from app.core.base_datos import obtener_bd
 from app.esquemas.dispositivo_esquemas import (
     DispositivoCrear, 
-    DispositivoActualizar
+    DispositivoActualizar,
+    DispositivoActualizarEstado
 )
 from app.servicios.dispositivo_servicio import (
     crear_dispositivo,
@@ -12,7 +13,8 @@ from app.servicios.dispositivo_servicio import (
     actualizar_dispositivo,
     eliminar_dispositivo,
     listar_todos_los_dispositivos_completo,
-    listar_dispositivos_por_riesgo
+    listar_dispositivos_por_riesgo,
+    actualizar_estado_dispositivo
 )
 
 router = APIRouter(
@@ -56,3 +58,11 @@ def eliminar_dispositivo_endpoint(dispositivo_id: int, db: Session = Depends(obt
 def listar_dispositivos_riesgo_endpoint(nivel_riesgo: str, db: Session = Depends(obtener_bd)):
     dispositivos = listar_dispositivos_por_riesgo(db, nivel_riesgo)
     return {"message": f"Lista de dispositivos con riesgo {nivel_riesgo}", "data": dispositivos}
+
+@router.put("/actualizar_estado_dispositivo/{dispositivo_id}")
+def actualizar_estado_dispositivo_endpoint(dispositivo_id: int, datos_estado: DispositivoActualizarEstado, db: Session = Depends(obtener_bd)):
+    """
+    📌 Ruta para actualizar el estado de un dispositivo específico.
+    """
+    dispositivo_actualizado = actualizar_estado_dispositivo(dispositivo_id, datos_estado, db)
+    return {"message": f"Estado del dispositivo {dispositivo_id} actualizado exitosamente", "data": dispositivo_actualizado}

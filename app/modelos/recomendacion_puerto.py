@@ -13,5 +13,5 @@ class RecomendacionPuerto(Base):
     fecha_creacion = Column(TIMESTAMP, server_default=func.current_timestamp())
     estado = Column(Boolean, default=True)
 
-    # Relación con puertos abiertos
-    puerto = relationship("PuertoAbierto", back_populates="recomendacion")
+    # Relación con PuertoAbierto
+    puerto = relationship("PuertoAbierto", back_populates="recomendaciones", lazy="joined")

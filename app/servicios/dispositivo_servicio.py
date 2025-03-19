@@ -135,23 +135,24 @@ def eliminar_dispositivo(dispositivo_id: int, db: Session):
 
 def actualizar_estado_dispositivo(dispositivo_id: int, datos_estado: DispositivoActualizarEstado, db: Session):
     """
-    Actualiza únicamente el estado de un dispositivo en la base de datos.
+    📌 Actualiza únicamente el estado de un dispositivo en la base de datos.
     """
-    print(f"[DEBUG] Actualizando estado del dispositivo {dispositivo_id} a {datos_estado.estado}")
+    print(f"[DEBUG] Intentando actualizar estado del dispositivo {dispositivo_id} a {datos_estado.estado}")
+
+    if not db.is_active:
+        raise HTTPException(status_code=500, detail="Error: La sesión de base de datos está cerrada.")
 
     dispositivo_existente = db.query(Dispositivo).filter(Dispositivo.dispositivo_id == dispositivo_id).first()
 
     if not dispositivo_existente:
         raise HTTPException(status_code=404, detail="Dispositivo no encontrado")
 
-    dispositivo_existente.estado = datos_estado.estado  # ✅ Se usa la validación del esquema
-
-    db.commit()
-    db.flush() 
-    db.refresh(dispositivo_existente)
+    dispositivo_existente.estado = datos_estado.estado  # ✅ Actualizar estado
     
-    print(f"[INFO] Estado del dispositivo {dispositivo_id} actualizado a {datos_estado.estado}")
+    # ❌ NO HACEMOS COMMIT AQUÍ
+    print(f"[INFO] Estado del dispositivo {dispositivo_id} actualizado correctamente a {datos_estado.estado}")
     return dispositivo_existente
+
 
 
 def listar_dispositivos_por_riesgo(db: Session, nivel_riesgo: str):

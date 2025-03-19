@@ -1,0 +1,76 @@
+[
+    {
+        "ip_address": "192.168.1.1",
+        "mac_address": "60:83:E7:B9:CE:78",
+        "sistema_operativo": "No disponible",
+        "puertos_abiertos": [
+            {
+                "puerto": 22,
+                "protocolo": "tcp",
+                "servicio": "ssh",
+                "version": "Dropbear sshd 2020.80 (protocol 2.0)"
+            },
+            {
+                "puerto": 23,
+                "protocolo": "tcp",
+                "servicio": "telnet",
+                "version": "No disponible"
+            },
+            {
+                "puerto": 53,
+                "protocolo": "tcp",
+                "servicio": "domain",
+                "version": "dnsmasq 2.85"
+            },
+            {
+                "puerto": 80,
+                "protocolo": "tcp",
+                "servicio": "http",
+                "version": "No disponible"
+            },
+            {
+                "puerto": 1900,
+                "protocolo": "tcp",
+                "servicio": "upnp",
+                "version": "Portable SDK for UPnP devices 1.6.19 (Linux 3.18.21; UPnP 1.0)"
+            },
+            {
+                "puerto": 7547,
+                "protocolo": "tcp",
+                "servicio": "http",
+                "version": "TP-LINK TR-069 remote access"
+            },
+            {
+                "puerto": 8292,
+                "protocolo": "tcp",
+                "servicio": "blp3?",
+                "version": "No disponible"
+            }
+        ]
+    },
+    {
+        "ip_address": "192.168.1.2",
+        "mac_address": "No disponible",
+        "sistema_operativo": "Linux 2.6.32",
+        "puertos_abiertos": [
+            {
+                "puerto": 80,
+                "protocolo": "tcp",
+                "servicio": "http",
+                "version": "Apache httpd 2.4.58 ((Ubuntu))"
+            },
+            {
+                "puerto": 8000,
+                "protocolo": "tcp",
+                "servicio": "http-alt",
+                "version": "uvicorn"
+            },
+            {
+                "puerto": 15611,
+                "protocolo": "tcp",
+                "servicio": "websocket",
+                "version": "Ogar agar.io server"
+            }
+        ]
+    }
+]

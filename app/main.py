@@ -20,15 +20,15 @@ from app.rutas.ruta_sistema_operativo import router as sistema_operativo_router
 from app.rutas.ruta_autenticacion import router as autenticacion_router
 from app.rutas.ruta_correo import router as correo_router 
 from app.rutas.ruta_recuperacion_contrasena import router as recuperacion_contrasena_router
-from app.rutas.ruta_configuracion_escaneo import router as configuracion_escaneo_router
 from app.rutas.ruta_tipos_escaneo import router as tipo_escaneo_router
 from app.rutas.ruta_riesgo import router as riesgo_router
 from app.rutas.ruta_dispositivo_riesgo import router as dispositivo_riesgo_router
 from app.rutas.ruta_recomendacion_puerto import router as recomendacion_puerto_router
 from app.rutas.ruta_generar_recomendaciones import router as generar_recomendaciones_router
-from app.rutas.ruta_detalles_escaneo_frecuencia import router as detalles_escaneo_frecuencia_router
-from app.rutas.ruta_detalles_escaneo_hora import router as detalles_escaneo_hora_router
+from app.rutas.ruta_configuracion_escaneos import router as configuracion_escaneo_router
+from app.rutas.ruta_registro_escaneos import router as registro_escaneo_router
 
+from app.servicios.programador_tareas import iniciar_programador  
 app = FastAPI(
     title="API de Gestión y Seguridad",
     description="Esta API gestiona usuarios, dispositivos, vulnerabilidades y más.",
@@ -56,14 +56,13 @@ app.include_router(sistema_operativo_router)
 app.include_router(autenticacion_router)
 app.include_router(correo_router)
 app.include_router(recuperacion_contrasena_router)
-app.include_router(configuracion_escaneo_router)
 app.include_router(tipo_escaneo_router)
 app.include_router(riesgo_router)
 app.include_router(dispositivo_riesgo_router)
 app.include_router(recomendacion_puerto_router)
 app.include_router(generar_recomendaciones_router)
-app.include_router(detalles_escaneo_frecuencia_router)
-app.include_router(detalles_escaneo_hora_router)
+app.include_router(configuracion_escaneo_router)
+app.include_router(registro_escaneo_router)
 
 app.add_middleware(
     CORSMiddleware,
@@ -72,6 +71,13 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# ✅ Iniciar el programador de tareas cuando arranque la API
+@app.on_event("startup")
+def startup_event():
+    print("[INFO] Iniciando API y programador de tareas...")
+    iniciar_programador()  # 🔥 Se ejecuta el programador al inicio
+    
 @app.get("/")
 def read_root():
     return {"mensaje": "¡Bienvenido a la API!"}

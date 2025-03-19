@@ -45,14 +45,16 @@ def procesar_resultados(db: Session, archivo_json: str):
 
         macs_actuales = {dispositivo["mac_address"] for dispositivo in datos}
 
-        with db.begin():  # 🔹 Se maneja una transacción global
-            print("[DEBUG] Iniciando transacción...")
+        # **1️⃣ Desactivar dispositivos que no fueron encontrados en el escaneo**
+        dispositivos_en_bd = db.query(Dispositivo).all()
 
-            # **1️⃣ Desactivar dispositivos que no fueron encontrados en el escaneo**
-            dispositivos_en_bd = db.query(Dispositivo).all()
-            for dispositivo_bd in dispositivos_en_bd:
-                if dispositivo_bd.mac_address not in macs_actuales:
-                    actualizar_estado_dispositivo(dispositivo_bd.dispositivo_id, DispositivoActualizarEstado(estado=False), db)
+        # 🛑 Antes de empezar la transacción, verificamos si la sesión está activa
+        if db.in_transaction():
+            print("[ERROR] ❌ ¡La sesión ya tiene una transacción activa! Abortando...")
+            return
+
+        with db.begin():  # 🔹 Se maneja una transacción global para la inserción de nuevos datos
+            print("[DEBUG] Iniciando transacción para guardar nuevos datos...")
 
             # **2️⃣ Procesar cada dispositivo encontrado en el escaneo**
             for dispositivo in datos:
@@ -71,7 +73,8 @@ def procesar_resultados(db: Session, archivo_json: str):
                 else:
                     dispositivo_bd = dispositivo_existente
                     if not dispositivo_bd.estado:
-                        actualizar_estado_dispositivo(dispositivo_bd.dispositivo_id, DispositivoActualizarEstado(estado=True), db)
+                        dispositivo_bd.estado = True  # ✅ Cambiamos estado sin hacer commit
+                        db.flush()  # ✅ Guardar temporalmente en la transacción sin hacer commit
 
                 # **Registrar el sistema operativo en `dispositivo_sistema_operativo`**
                 sistema_operativo = obtener_sistema_operativo_por_nombre(db, so_nombre)
@@ -84,6 +87,7 @@ def procesar_resultados(db: Session, archivo_json: str):
                     crear_dispositivo_sistema_operativo(datos_so_dispositivo, db)  # ✅ Insertar en la tabla
                 else:
                     print(f"[WARN] Sistema operativo '{so_nombre}' no encontrado en la BD.")
+
                 # **Registrar la IP en `ip_asignaciones` solo si es diferente**
                 ultima_ip = obtener_ultima_ip_dispositivo(db, dispositivo_bd.dispositivo_id)
                 if ultima_ip != ip_actual:
@@ -102,15 +106,12 @@ def procesar_resultados(db: Session, archivo_json: str):
 
             print("[DEBUG] Confirmando transacción en la BD...")
 
-            db.commit()  # ✅ Se confirma toda la transacción al final
-
         print("[INFO] Datos guardados en la base de datos exitosamente.")
 
     except (SQLAlchemyError, json.JSONDecodeError) as e:
         db.rollback()  # 🔴 **Revertir cambios en caso de error**
         print(f"[ERROR] Error al procesar los resultados: {e}")
         raise HTTPException(status_code=500, detail=f"Error al guardar en la BD: {str(e)}")
-
 
 
 if __name__ == "__main__":

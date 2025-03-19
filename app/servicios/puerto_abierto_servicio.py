@@ -50,7 +50,7 @@ def obtener_recomendaciones_por_puertos(db: Session, request: PuertosSeleccionad
     if not request.puertos_ids:
         raise HTTPException(status_code=400, detail="Debe proporcionar al menos un puerto para obtener recomendaciones.")
 
-    puertos = db.query(PuertoAbierto).filter(PuertoAbierto.puerto_id.in_(request.puertos_ids)).options(joinedload(PuertoAbierto.recomendacion)).all()
+    puertos = db.query(PuertoAbierto).filter(PuertoAbierto.puerto_id.in_(request.puertos_ids)).options(joinedload(PuertoAbierto.recomendaciones)).all()
 
     if not puertos:
         raise HTTPException(status_code=404, detail="No se encontraron puertos con recomendaciones para los IDs proporcionados.")
@@ -63,7 +63,9 @@ def obtener_recomendaciones_por_puertos(db: Session, request: PuertosSeleccionad
             "protocolo": puerto.protocolo,
             "servicio": puerto.servicio,
             "version": puerto.version,
-            "recomendacion": puerto.recomendacion.recomendacion if puerto.recomendacion else "No hay recomendación disponible"
+            "recomendaciones": [
+                recomendacion.recomendacion for recomendacion in puerto.recomendaciones
+            ] if puerto.recomendaciones else ["No hay recomendaciones disponibles"]
         })
 
     return {"message": "Recomendaciones obtenidas con éxito.", "puertos": resultado}

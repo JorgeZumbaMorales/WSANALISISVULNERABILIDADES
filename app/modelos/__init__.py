@@ -6,6 +6,7 @@ from .riesgo import Riesgo
 from .dispositivo_riesgo import DispositivoRiesgo
 from .ip_asignaciones import IpAsignacion  # ✅ AGREGAR ESTO
 from .sistema_operativo import SistemaOperativo 
+from .recomendacion_puerto import RecomendacionPuerto
 __all__ = [
     "Usuario",
     "Dispositivo",
@@ -14,5 +15,6 @@ __all__ = [
     "Riesgo",
     "DispositivoRiesgo",
     "SistemaOperativo",
-    "IpAsignacion"
+    "IpAsignacion",
+    "RecomendacionPuerto" 
 ]
