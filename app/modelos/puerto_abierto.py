@@ -1,7 +1,7 @@
 from sqlalchemy import Column, Integer, String, Boolean, TIMESTAMP, ForeignKey
 from sqlalchemy.sql import func
 from app.core.base import Base  
-
+from sqlalchemy.orm import relationship
 class PuertoAbierto(Base):
     __tablename__ = 'puertos_abiertos'
     __table_args__ = {'schema': 'analisis_vulnerabilidades'}
@@ -14,3 +14,5 @@ class PuertoAbierto(Base):
     version = Column(String(100))
     fecha_creacion = Column(TIMESTAMP, server_default=func.now())
     estado = Column(Boolean, default=True)
+
+    recomendacion = relationship("RecomendacionPuerto", uselist=False, back_populates="puerto")

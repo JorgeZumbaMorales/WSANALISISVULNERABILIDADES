@@ -161,7 +161,8 @@ def listar_dispositivos_por_riesgo(db: Session, nivel_riesgo: str):
         Dispositivo.mac_address,
         Riesgo.nombre_riesgo.label("riesgo"),
         PuertoAbierto.puerto_id,
-        PuertoAbierto.puerto.label("numero_puerto")
+        PuertoAbierto.puerto.label("numero_puerto"),
+        PuertoAbierto.servicio.label("servicio")
     ).join(DispositivoRiesgo, Dispositivo.dispositivo_id == DispositivoRiesgo.dispositivo_id)\
      .join(Riesgo, DispositivoRiesgo.riesgo_id == Riesgo.riesgo_id)\
      .join(PuertoAbierto, Dispositivo.dispositivo_id == PuertoAbierto.dispositivo_id)\
@@ -177,11 +178,12 @@ def listar_dispositivos_por_riesgo(db: Session, nivel_riesgo: str):
                 "dispositivo_id": dispositivo.dispositivo_id,
                 "mac_address": dispositivo.mac_address,
                 "riesgo": dispositivo.riesgo,
-                "puertos_abiertos": []
+                "puertos_abiertos": [],
             }
         dispositivos_dict[dispositivo_id]["puertos_abiertos"].append({
             "puerto_id": dispositivo.puerto_id,
-            "numero": dispositivo.numero_puerto
+            "numero": dispositivo.numero_puerto,
+            "servicio": dispositivo.servicio
         })
 
     return {"message": f"Lista de dispositivos con riesgo {nivel_riesgo}", "dispositivos": list(dispositivos_dict.values())}

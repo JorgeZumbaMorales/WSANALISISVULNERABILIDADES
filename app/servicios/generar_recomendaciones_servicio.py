@@ -90,6 +90,31 @@ def generar_recomendaciones_por_dispositivo(db: Session, dispositivo_id: int):
     
     return {"message": "Recomendaciones generadas con éxito.", "dispositivo": dispositivo_id, "recomendaciones": recomendaciones}
 
+def generar_recomendaciones_por_puertos_seleccionados(db: Session, puertos_ids: list[int]):
+    """🔍 Genera recomendaciones **solo para los puertos seleccionados** por el usuario."""
+    if not puertos_ids:
+        raise HTTPException(status_code=400, detail="Debe proporcionar al menos un puerto para generar recomendaciones.")
+
+    recomendaciones = []
+    for puerto_id in puertos_ids:
+        # Obtener el puerto de la base de datos
+        puerto = db.query(PuertoAbierto).filter(PuertoAbierto.puerto_id == puerto_id).first()
+        if not puerto:
+            print(f"[ERROR] Puerto con ID {puerto_id} no encontrado, se omite.")
+            continue
+
+        # Si ya existe una recomendación, no la generamos de nuevo
+        if obtener_recomendacion_existente(db, puerto_id):
+            print(f"[INFO] Recomendación ya existe para el puerto {puerto_id}, se omite la generación.")
+            continue  
+
+        # Generar la recomendación con Gemini
+        recomendacion = generar_recomendacion_con_gemini(puerto)
+        guardar_recomendacion(db, puerto_id, recomendacion)
+        recomendaciones.append({"puerto": puerto.puerto, "recomendacion": recomendacion})
+
+    return {"message": "Recomendaciones generadas con éxito.", "puertos": puertos_ids, "recomendaciones": recomendaciones}
+
 # ✅ **EJECUTAR EL SCRIPT DIRECTAMENTE**
 if __name__ == "__main__":
     print("[INFO] Iniciando generación de recomendaciones con Gemini...")

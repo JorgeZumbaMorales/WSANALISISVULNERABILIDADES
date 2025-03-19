@@ -1,9 +1,11 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
+from typing import List
 from app.core.base_datos import obtener_bd
-from app.esquemas.puerto_abierto_esquemas import PuertoAbiertoCrear, PuertoAbiertoActualizar
+from app.esquemas.puerto_abierto_esquemas import PuertoAbiertoCrear, PuertoAbiertoActualizar, PuertosSeleccionadosPeticion
 from app.servicios.puerto_abierto_servicio import (
-    crear_puerto_abierto, listar_puertos_abiertos, actualizar_puerto_abierto, eliminar_puerto_abierto
+    crear_puerto_abierto, listar_puertos_abiertos, actualizar_puerto_abierto, eliminar_puerto_abierto,
+    obtener_recomendaciones_por_puertos
 )
 
 router = APIRouter(
@@ -32,3 +34,20 @@ def actualizar_puerto_endpoint(puerto_id: int, datos_puerto: PuertoAbiertoActual
 def eliminar_puerto_endpoint(puerto_id: int, db: Session = Depends(obtener_bd)):
     eliminar_puerto_abierto(puerto_id, db)
     return {"message": "Puerto eliminado exitosamente"}
+
+@router.post("/ver_recomendaciones")
+def obtener_recomendaciones_por_puertos_endpoint(
+    request: PuertosSeleccionadosPeticion,
+    db: Session = Depends(obtener_bd)
+):
+    """
+    📌 Obtiene recomendaciones solo para los puertos seleccionados.
+    """
+    try:
+        print("[DEBUG] Recibido en el backend:", request.puertos_ids)  # 🔥 Imprime lo recibido
+        resultado = obtener_recomendaciones_por_puertos(db, request)
+        return {"message": "Consulta exitosa", "data": resultado}
+    except HTTPException as e:
+        raise e
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error inesperado: {str(e)}")

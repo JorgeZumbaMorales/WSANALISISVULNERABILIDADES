@@ -14,4 +14,4 @@ class RecomendacionPuerto(Base):
     estado = Column(Boolean, default=True)
 
     # Relación con puertos abiertos
-    puerto = relationship("PuertoAbierto", backref="recomendaciones_asociadas")
+    puerto = relationship("PuertoAbierto", back_populates="recomendacion")

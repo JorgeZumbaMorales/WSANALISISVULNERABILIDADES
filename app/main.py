@@ -26,6 +26,9 @@ from app.rutas.ruta_riesgo import router as riesgo_router
 from app.rutas.ruta_dispositivo_riesgo import router as dispositivo_riesgo_router
 from app.rutas.ruta_recomendacion_puerto import router as recomendacion_puerto_router
 from app.rutas.ruta_generar_recomendaciones import router as generar_recomendaciones_router
+from app.rutas.ruta_detalles_escaneo_frecuencia import router as detalles_escaneo_frecuencia_router
+from app.rutas.ruta_detalles_escaneo_hora import router as detalles_escaneo_hora_router
+
 app = FastAPI(
     title="API de Gestión y Seguridad",
     description="Esta API gestiona usuarios, dispositivos, vulnerabilidades y más.",
@@ -59,6 +62,9 @@ app.include_router(riesgo_router)
 app.include_router(dispositivo_riesgo_router)
 app.include_router(recomendacion_puerto_router)
 app.include_router(generar_recomendaciones_router)
+app.include_router(detalles_escaneo_frecuencia_router)
+app.include_router(detalles_escaneo_hora_router)
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"], 

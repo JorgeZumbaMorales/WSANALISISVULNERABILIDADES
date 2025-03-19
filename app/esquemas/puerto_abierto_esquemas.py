@@ -1,6 +1,6 @@
 from pydantic import BaseModel, Field
 from typing import Optional
-
+from typing import List
 class PuertoAbiertoCrear(BaseModel):
     dispositivo_id: int
     puerto: int
@@ -28,3 +28,6 @@ class PuertoAbiertoRespuesta(BaseModel):
 
     class Config:
         from_attributes = True
+
+class PuertosSeleccionadosPeticion(BaseModel):
+    puertos_ids: List[int]
