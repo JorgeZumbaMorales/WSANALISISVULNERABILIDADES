@@ -47,64 +47,60 @@ def procesar_resultados(db: Session, archivo_json: str):
 
         # **1️⃣ Desactivar dispositivos que no fueron encontrados en el escaneo**
         dispositivos_en_bd = db.query(Dispositivo).all()
+        for dispositivo_bd in dispositivos_en_bd:
+            if dispositivo_bd.mac_address not in macs_actuales:
+                actualizar_estado_dispositivo(dispositivo_bd.dispositivo_id, DispositivoActualizarEstado(estado=False), db)
 
-        # 🛑 Antes de empezar la transacción, verificamos si la sesión está activa
-        if db.in_transaction():
-            print("[ERROR] ❌ ¡La sesión ya tiene una transacción activa! Abortando...")
-            return
+        # **2️⃣ Procesar cada dispositivo encontrado en el escaneo**
+        for dispositivo in datos:
+            ip_actual = dispositivo["ip_address"]
+            mac = dispositivo["mac_address"]
+            so_nombre = dispositivo["sistema_operativo"]
 
-        with db.begin():  # 🔹 Se maneja una transacción global para la inserción de nuevos datos
-            print("[DEBUG] Iniciando transacción para guardar nuevos datos...")
+            dispositivo_existente = obtener_dispositivo_por_mac(db, mac)
 
-            # **2️⃣ Procesar cada dispositivo encontrado en el escaneo**
-            for dispositivo in datos:
-                ip_actual = dispositivo["ip_address"]
-                mac = dispositivo["mac_address"]
-                so_nombre = dispositivo["sistema_operativo"]
+            if not dispositivo_existente:
+                datos_dispositivo = DispositivoCrear(
+                    nombre_dispositivo=f"Dispositivo-{mac[-4:]}",  
+                    mac_address=mac
+                )
+                dispositivo_bd = crear_dispositivo(datos_dispositivo, db)
+            else:
+                dispositivo_bd = dispositivo_existente
+                if not dispositivo_bd.estado:
+                    dispositivo_bd.estado = True
+                    db.flush()
 
-                dispositivo_existente = obtener_dispositivo_por_mac(db, mac)
+            # **Registrar el sistema operativo en `dispositivo_sistema_operativo`**
+            sistema_operativo = obtener_sistema_operativo_por_nombre(db, so_nombre)
 
-                if not dispositivo_existente:
-                    datos_dispositivo = DispositivoCrear(
-                        nombre_dispositivo=f"Dispositivo-{mac[-4:]}",  
-                        mac_address=mac
-                    )
-                    dispositivo_bd = crear_dispositivo(datos_dispositivo, db)
-                else:
-                    dispositivo_bd = dispositivo_existente
-                    if not dispositivo_bd.estado:
-                        dispositivo_bd.estado = True  # ✅ Cambiamos estado sin hacer commit
-                        db.flush()  # ✅ Guardar temporalmente en la transacción sin hacer commit
+            if sistema_operativo:
+                datos_so_dispositivo = DispositivoSistemaOperativoCrear(
+                    dispositivo_id=dispositivo_bd.dispositivo_id,
+                    sistema_operativo_id=sistema_operativo.sistema_operativo_id
+                )
+                crear_dispositivo_sistema_operativo(datos_so_dispositivo, db)
+            else:
+                print(f"[WARN] Sistema operativo '{so_nombre}' no encontrado en la BD.")
 
-                # **Registrar el sistema operativo en `dispositivo_sistema_operativo`**
-                sistema_operativo = obtener_sistema_operativo_por_nombre(db, so_nombre)
+            # **Registrar la IP en `ip_asignaciones` solo si es diferente**
+            ultima_ip = obtener_ultima_ip_dispositivo(db, dispositivo_bd.dispositivo_id)
+            if ultima_ip != ip_actual:
+                registrar_nueva_ip(mac, ip_actual, db)
 
-                if sistema_operativo:  # Verificar que el SO existe en la BD
-                    datos_so_dispositivo = DispositivoSistemaOperativoCrear(
-                        dispositivo_id=dispositivo_bd.dispositivo_id,
-                        sistema_operativo_id=sistema_operativo.sistema_operativo_id
-                    )
-                    crear_dispositivo_sistema_operativo(datos_so_dispositivo, db)  # ✅ Insertar en la tabla
-                else:
-                    print(f"[WARN] Sistema operativo '{so_nombre}' no encontrado en la BD.")
+            # **Guardar los puertos abiertos**
+            for puerto in dispositivo["puertos_abiertos"]:
+                datos_puerto = PuertoAbiertoCrear(
+                    dispositivo_id=dispositivo_bd.dispositivo_id,
+                    puerto=puerto["puerto"],
+                    protocolo=puerto["protocolo"].upper(),
+                    servicio=puerto["servicio"],
+                    version=puerto["version"]
+                )
+                crear_puerto_abierto(datos_puerto, db)
 
-                # **Registrar la IP en `ip_asignaciones` solo si es diferente**
-                ultima_ip = obtener_ultima_ip_dispositivo(db, dispositivo_bd.dispositivo_id)
-                if ultima_ip != ip_actual:
-                    registrar_nueva_ip(mac, ip_actual, db)  # ✅ Ya no hace commit dentro
-
-                # **Guardar los puertos abiertos**
-                for puerto in dispositivo["puertos_abiertos"]:
-                    datos_puerto = PuertoAbiertoCrear(
-                        dispositivo_id=dispositivo_bd.dispositivo_id,
-                        puerto=puerto["puerto"],
-                        protocolo=puerto["protocolo"].upper(),
-                        servicio=puerto["servicio"],
-                        version=puerto["version"]
-                    )
-                    crear_puerto_abierto(datos_puerto, db)
-
-            print("[DEBUG] Confirmando transacción en la BD...")
+        print("[DEBUG] Confirmando transacción en la BD...")
+        db.commit()  # ✅ Hacer commit después de procesar todo
 
         print("[INFO] Datos guardados en la base de datos exitosamente.")
 
@@ -112,6 +108,7 @@ def procesar_resultados(db: Session, archivo_json: str):
         db.rollback()  # 🔴 **Revertir cambios en caso de error**
         print(f"[ERROR] Error al procesar los resultados: {e}")
         raise HTTPException(status_code=500, detail=f"Error al guardar en la BD: {str(e)}")
+
 
 
 if __name__ == "__main__":
