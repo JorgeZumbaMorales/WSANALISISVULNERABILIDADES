@@ -49,6 +49,165 @@
         ]
     },
     {
+        "ip_address": "192.168.1.4",
+        "mac_address": "5A:B1:FD:96:C5:45",
+        "sistema_operativo": "No disponible",
+        "puertos_abiertos": [
+            {
+                "puerto": 40777,
+                "protocolo": "tcp",
+                "servicio": "unknown",
+                "version": "No disponible"
+            }
+        ]
+    },
+    {
+        "ip_address": "192.168.1.5",
+        "mac_address": "10:3D:0A:32:E5:38",
+        "sistema_operativo": "Amazon Kindle Paperwhite",
+        "puertos_abiertos": [
+            {
+                "puerto": 6466,
+                "protocolo": "tcp",
+                "servicio": "ssl/unknown",
+                "version": "No disponible"
+            },
+            {
+                "puerto": 6467,
+                "protocolo": "tcp",
+                "servicio": "ssl/unknown",
+                "version": "No disponible"
+            },
+            {
+                "puerto": 8008,
+                "protocolo": "tcp",
+                "servicio": "http?",
+                "version": "No disponible"
+            },
+            {
+                "puerto": 8009,
+                "protocolo": "tcp",
+                "servicio": "ssl/ajp13?",
+                "version": "No disponible"
+            },
+            {
+                "puerto": 8443,
+                "protocolo": "tcp",
+                "servicio": "ssl/https-alt?",
+                "version": "No disponible"
+            },
+            {
+                "puerto": 9000,
+                "protocolo": "tcp",
+                "servicio": "ssl/cslistener?",
+                "version": "No disponible"
+            },
+            {
+                "puerto": 9080,
+                "protocolo": "tcp",
+                "servicio": "glrpc?",
+                "version": "No disponible"
+            },
+            {
+                "puerto": 33392,
+                "protocolo": "tcp",
+                "servicio": "tcpwrapped",
+                "version": "No disponible"
+            },
+            {
+                "puerto": 35769,
+                "protocolo": "tcp",
+                "servicio": "tcpwrapped",
+                "version": "No disponible"
+            }
+        ]
+    },
+    {
+        "ip_address": "192.168.1.7",
+        "mac_address": "54:8C:A0:79:3D:8B",
+        "sistema_operativo": "Microsoft Windows 10 1703",
+        "puertos_abiertos": [
+            {
+                "puerto": 135,
+                "protocolo": "tcp",
+                "servicio": "msrpc",
+                "version": "Microsoft Windows RPC"
+            },
+            {
+                "puerto": 139,
+                "protocolo": "tcp",
+                "servicio": "netbios-ssn",
+                "version": "Microsoft Windows netbios-ssn"
+            },
+            {
+                "puerto": 445,
+                "protocolo": "tcp",
+                "servicio": "microsoft-ds?",
+                "version": "No disponible"
+            },
+            {
+                "puerto": 3389,
+                "protocolo": "tcp",
+                "servicio": "ssl/ms-wbt-server?",
+                "version": "No disponible"
+            },
+            {
+                "puerto": 5040,
+                "protocolo": "tcp",
+                "servicio": "unknown",
+                "version": "No disponible"
+            },
+            {
+                "puerto": 7070,
+                "protocolo": "tcp",
+                "servicio": "ssl/realserver?",
+                "version": "No disponible"
+            },
+            {
+                "puerto": 49664,
+                "protocolo": "tcp",
+                "servicio": "msrpc",
+                "version": "Microsoft Windows RPC"
+            },
+            {
+                "puerto": 49665,
+                "protocolo": "tcp",
+                "servicio": "msrpc",
+                "version": "Microsoft Windows RPC"
+            },
+            {
+                "puerto": 49666,
+                "protocolo": "tcp",
+                "servicio": "msrpc",
+                "version": "Microsoft Windows RPC"
+            },
+            {
+                "puerto": 49667,
+                "protocolo": "tcp",
+                "servicio": "msrpc",
+                "version": "Microsoft Windows RPC"
+            },
+            {
+                "puerto": 49668,
+                "protocolo": "tcp",
+                "servicio": "msrpc",
+                "version": "Microsoft Windows RPC"
+            },
+            {
+                "puerto": 49669,
+                "protocolo": "tcp",
+                "servicio": "msrpc",
+                "version": "Microsoft Windows RPC"
+            },
+            {
+                "puerto": 49674,
+                "protocolo": "tcp",
+                "servicio": "msrpc",
+                "version": "Microsoft Windows RPC"
+            }
+        ]
+    },
+    {
         "ip_address": "192.168.1.2",
         "mac_address": "No disponible",
         "sistema_operativo": "Linux 2.6.32",

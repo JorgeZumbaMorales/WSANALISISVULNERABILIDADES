@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from contextlib import asynccontextmanager
 from fastapi.middleware.cors import CORSMiddleware
 from app.rutas.ruta_usuario import router as usuarios_router
 from app.rutas.ruta_rol import router as roles_router
@@ -18,7 +19,7 @@ from app.rutas.ruta_seccion import router as seccion_router
 from app.rutas.ruta_puerto_abierto import router as puerto_abierto_router
 from app.rutas.ruta_sistema_operativo import router as sistema_operativo_router
 from app.rutas.ruta_autenticacion import router as autenticacion_router
-from app.rutas.ruta_correo import router as correo_router 
+from app.rutas.ruta_correo import router as correo_router
 from app.rutas.ruta_recuperacion_contrasena import router as recuperacion_contrasena_router
 from app.rutas.ruta_tipos_escaneo import router as tipo_escaneo_router
 from app.rutas.ruta_riesgo import router as riesgo_router
@@ -28,14 +29,24 @@ from app.rutas.ruta_generar_recomendaciones import router as generar_recomendaci
 from app.rutas.ruta_configuracion_escaneos import router as configuracion_escaneo_router
 from app.rutas.ruta_registro_escaneos import router as registro_escaneo_router
 
-from app.servicios.programador_tareas import iniciar_programador  
+from app.servicios.programador_tareas import iniciar_programador, ejecutar_escaneo_programado
+
+# ✅ Usar lifespan en FastAPI para inicializar correctamente el programador de tareas
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    print("[INFO] 🚀 Iniciando API y programador de tareas...")
+    iniciar_programador()  # 🔥 Se ejecuta el programador de tareas al inicio
+    yield  # Mantener la API corriendo
+
+# ✅ NO redefinir `app` después de agregar rutas o middleware
 app = FastAPI(
     title="API de Gestión y Seguridad",
     description="Esta API gestiona usuarios, dispositivos, vulnerabilidades y más.",
-    version="1.0.0"
+    version="1.0.0",
+    lifespan=lifespan  # ✅ Iniciar programador de tareas correctamente
 )
 
-
+# ✅ Incluir todas las rutas antes de definir middleware
 app.include_router(usuarios_router)
 app.include_router(roles_router)
 app.include_router(permisos_router)
@@ -64,6 +75,7 @@ app.include_router(generar_recomendaciones_router)
 app.include_router(configuracion_escaneo_router)
 app.include_router(registro_escaneo_router)
 
+# ✅ Configurar CORS correctamente
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"], 
@@ -72,12 +84,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# ✅ Iniciar el programador de tareas cuando arranque la API
-@app.on_event("startup")
-def startup_event():
-    print("[INFO] Iniciando API y programador de tareas...")
-    iniciar_programador()  # 🔥 Se ejecuta el programador al inicio
-    
 @app.get("/")
 def read_root():
     return {"mensaje": "¡Bienvenido a la API!"}
+
+# ✅ Forzar una ejecución manual después de iniciar
+print("[DEBUG] ⏳ Forzando ejecución del escaneo manualmente...")
+ejecutar_escaneo_programado()  # 🔥 Llamar directamente a la función
