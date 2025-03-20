@@ -88,6 +88,4 @@ app.add_middleware(
 def read_root():
     return {"mensaje": "¡Bienvenido a la API!"}
 
-# ✅ Forzar una ejecución manual después de iniciar
-print("[DEBUG] ⏳ Forzando ejecución del escaneo manualmente...")
-ejecutar_escaneo_programado()  # 🔥 Llamar directamente a la función
+

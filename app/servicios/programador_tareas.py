@@ -6,7 +6,7 @@ import time
 from app.core.base_datos import SesionLocal
 from app.servicios.configuracion_escaneos_servicio import listar_configuraciones_escaneo
 from app.utils.nmap_utils import ejecutar_nmap
-from app.transacciones.escaneos import procesar_resultados
+from app.transacciones.transaccion_guardar_escaneos import procesar_resultados
 from app.servicios.registro_escaneos_servicio import crear_registro_escaneo
 
 scheduler = BackgroundScheduler()
