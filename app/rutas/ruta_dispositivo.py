@@ -1,10 +1,12 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.core.base_datos import obtener_bd
+from app.transacciones.transaccion_dispositivo_sistema_operativo import transaccion_actualizar_dispositivo_con_so
 from app.esquemas.dispositivo_esquemas import (
     DispositivoCrear, 
     DispositivoActualizar,
-    DispositivoActualizarEstado
+    DispositivoActualizarEstado,
+    DispositivoActualizarConSO
 )
 from app.servicios.dispositivo_servicio import (
     crear_dispositivo,
@@ -43,11 +45,18 @@ def listar_todos_los_dispositivos_completo_endpoint(db: Session = Depends(obtene
     return {"message": "Lista completa de dispositivos obtenida exitosamente", "data": dispositivos}
 
 @router.put("/actualizar_dispositivo/{dispositivo_id}")
-def actualizar_dispositivo_endpoint(dispositivo_id: int, datos_dispositivo: DispositivoActualizar, db: Session = Depends(obtener_bd)):
-    dispositivo = actualizar_dispositivo(dispositivo_id, datos_dispositivo, db)
-    if not dispositivo:
+def actualizar_dispositivo_endpoint(dispositivo_id: int, datos_dispositivo: DispositivoActualizarConSO, db: Session = Depends(obtener_bd)):
+    dispositivo_actualizado = transaccion_actualizar_dispositivo_con_so(dispositivo_id, datos_dispositivo, db)
+    
+    if not dispositivo_actualizado:
         raise HTTPException(status_code=404, detail="Dispositivo no encontrado")
-    return {"message": "Dispositivo actualizado exitosamente", "data": dispositivo}
+    
+    return {
+        "message": "Dispositivo actualizado exitosamente",
+        "data": dispositivo_actualizado
+    }
+
+
 
 @router.delete("/eliminar_dispositivo/{dispositivo_id}")
 def eliminar_dispositivo_endpoint(dispositivo_id: int, db: Session = Depends(obtener_bd)):

@@ -1,114 +1,75 @@
 [
     {
-        "ip_address": "192.168.1.10",
-        "mac_address": "A1:B2:C3:D4:E5:F6",
-        "sistema_operativo": "Windows 10",
-        "puertos_abiertos": [
-            {
-                "puerto": 135,
-                "protocolo": "tcp",
-                "servicio": "msrpc",
-                "version": "Microsoft Windows RPC"
-            },
-            {
-                "puerto": 445,
-                "protocolo": "tcp",
-                "servicio": "microsoft-ds",
-                "version": "Microsoft Windows Server Message Block"
-            },
-            {
-                "puerto": 3389,
-                "protocolo": "tcp",
-                "servicio": "ms-wbt-server",
-                "version": "Microsoft Terminal Services"
-            }
-        ]
-    },
-    {
-        "ip_address": "192.168.1.20",
-        "mac_address": "B2:C3:D4:E5:F6:A1",
-        "sistema_operativo": "Ubuntu 22.04",
+        "ip_address": "192.168.1.1",
+        "mac_address": "60:83:E7:B9:CE:78",
+        "sistema_operativo": "No disponible",
         "puertos_abiertos": [
             {
                 "puerto": 22,
                 "protocolo": "tcp",
                 "servicio": "ssh",
-                "version": "OpenSSH 8.9p1 Ubuntu"
-            },
-            {
-                "puerto": 443,
-                "protocolo": "tcp",
-                "servicio": "https",
-                "version": "Apache httpd 2.4.52 (Ubuntu)"
-            },
-            {
-                "puerto": 3306,
-                "protocolo": "tcp",
-                "servicio": "mysql",
-                "version": "MySQL 8.0.29"
-            }
-        ]
-    },
-    {
-        "ip_address": "192.168.1.30",
-        "mac_address": "C3:D4:E5:F6:A1:B2",
-        "sistema_operativo": "MacOS Ventura",
-        "puertos_abiertos": [
-            {
-                "puerto": 631,
-                "protocolo": "tcp",
-                "servicio": "ipp",
-                "version": "CUPS 2.3.3"
-            },
-            {
-                "puerto": 5900,
-                "protocolo": "tcp",
-                "servicio": "vnc",
-                "version": "Apple Screen Sharing"
-            }
-        ]
-    },
-    {
-        "ip_address": "192.168.1.40",
-        "mac_address": "D4:E5:F6:A1:B2:C3",
-        "sistema_operativo": "Debian 11",
-        "puertos_abiertos": [
-            {
-                "puerto": 21,
-                "protocolo": "tcp",
-                "servicio": "ftp",
-                "version": "vsftpd 3.0.3"
+                "version": "Dropbear sshd 2020.80 (protocol 2.0)"
             },
             {
                 "puerto": 23,
                 "protocolo": "tcp",
                 "servicio": "telnet",
-                "version": "Linux telnetd"
+                "version": "No disponible"
+            },
+            {
+                "puerto": 53,
+                "protocolo": "tcp",
+                "servicio": "domain",
+                "version": "dnsmasq 2.85"
+            },
+            {
+                "puerto": 80,
+                "protocolo": "tcp",
+                "servicio": "http",
+                "version": "No disponible"
+            },
+            {
+                "puerto": 1900,
+                "protocolo": "tcp",
+                "servicio": "upnp",
+                "version": "Portable SDK for UPnP devices 1.6.19 (Linux 3.18.21; UPnP 1.0)"
+            },
+            {
+                "puerto": 7547,
+                "protocolo": "tcp",
+                "servicio": "http",
+                "version": "TP-LINK TR-069 remote access"
+            },
+            {
+                "puerto": 8292,
+                "protocolo": "tcp",
+                "servicio": "blp3?",
+                "version": "No disponible"
             }
         ]
     },
     {
-        "ip_address": "192.168.1.50",
-        "mac_address": "E5:F6:A1:B2:C3:D4",
-        "sistema_operativo": "CentOS 8",
+        "ip_address": "192.168.1.2",
+        "mac_address": "No disponible",
+        "sistema_operativo": "Linux 2.6.32",
         "puertos_abiertos": [
             {
-                "puerto": 25,
+                "puerto": 80,
                 "protocolo": "tcp",
-                "servicio": "smtp",
-                "version": "Postfix smtpd"
+                "servicio": "http",
+                "version": "Apache httpd 2.4.58 ((Ubuntu))"
             },
             {
-                "puerto": 587,
+                "puerto": 8000,
                 "protocolo": "tcp",
-                "servicio": "smtp",
-                "version": "Postfix smtpd (STARTTLS)"
+                "servicio": "http-alt",
+                "version": "uvicorn"
             },
             {
-                "puerto": 993,
+                "puerto": 15611,
                 "protocolo": "tcp",
-                "servicio": "imap",
-                "version": "Dovecot IMAP Server"
+                "servicio": "websocket",
+                "version": "Ogar agar.io server"
             }
         ]
     }

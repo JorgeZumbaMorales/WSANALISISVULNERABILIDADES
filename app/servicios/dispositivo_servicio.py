@@ -56,6 +56,7 @@ def listar_dispositivos_completo(db: Session):
         
         dispositivos_resultado.append({
             "dispositivo_id": dispositivo.dispositivo_id,
+            "nombre_dispositivo": dispositivo.nombre_dispositivo,
             "mac_address": dispositivo.mac_address,
             "sistema_operativo": so,
             "ultima_ip": ultima_ip[0] if ultima_ip else "No asignada",
@@ -91,6 +92,7 @@ def listar_todos_los_dispositivos_completo(db: Session):
         
         dispositivos_resultado.append({
             "dispositivo_id": dispositivo.dispositivo_id,
+            "nombre_dispositivo": dispositivo.nombre_dispositivo,
             "mac_address": dispositivo.mac_address,
             "sistema_operativo": so,
             "ultima_ip": ultima_ip[0] if ultima_ip else "No asignada",

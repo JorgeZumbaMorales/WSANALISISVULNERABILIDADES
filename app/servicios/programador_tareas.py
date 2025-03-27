@@ -4,7 +4,7 @@ from datetime import datetime
 import threading
 import time
 from app.core.base_datos import SesionLocal
-from app.servicios.configuracion_escaneos_servicio import listar_configuraciones_escaneo
+from app.servicios.configuracion_escaneos_servicio import obtener_configuracion_escaneo_con_horas
 from app.utils.nmap_utils import ejecutar_nmap
 from app.transacciones.transaccion_guardar_escaneos import procesar_resultados
 from app.servicios.registro_escaneos_servicio import crear_registro_escaneo
@@ -13,10 +13,9 @@ scheduler = BackgroundScheduler()
 
 def obtener_configuracion_escaneo_activa(db: Session):
     """
-    📌 Obtiene la configuración de escaneo activa (la más reciente con estado=True).
+    📌 Obtiene la configuración de escaneo activa con sus horas si es necesario.
     """
-    configuraciones = listar_configuraciones_escaneo(db)
-    return next((config for config in configuraciones if config.estado), None)
+    return obtener_configuracion_escaneo_con_horas(db)
 
 
 def ejecutar_escaneo_programado():
@@ -66,7 +65,6 @@ def ejecutar_escaneo_programado():
     print(f"[DEBUG] 📋 Tareas programadas tras ejecución: {scheduler.get_jobs()}")
 
 
-
 def programar_escaneo():
     """
     📌 Configura la programación de escaneos según la configuración activa en la BD.
@@ -76,15 +74,11 @@ def programar_escaneo():
         configuracion_activa = obtener_configuracion_escaneo_activa(db_sesion)
 
         if not configuracion_activa:
-            print("[INFO] No hay una configuración activa. No se programará ningún escaneo.")
+            print("[INFO] ❌ No hay configuración activa. No se programará ningún escaneo.")
             return
 
-        jobs = scheduler.get_jobs()
-        escaneo_programado = any(job.id == "escaneo_programado" for job in jobs)
-
-        if escaneo_programado:
-            print("[INFO] ⚠️ El escaneo ya está programado. No se realizarán cambios.")
-            return
+        # ✅ Cancelar tareas previas antes de programar la nueva
+        scheduler.remove_all_jobs()
 
         print("[INFO] ✅ Programando nuevo escaneo.")
 
@@ -96,56 +90,34 @@ def programar_escaneo():
                     ejecutar_escaneo_programado,
                     'interval',
                     minutes=frecuencia_minutos,
-                    id='escaneo_programado',
-                    replace_existing=True
+                    id='escaneo_programado'
                 )
                 print(f"[INFO] ✅ Escaneo programado cada {frecuencia_minutos} minutos.")
             else:
                 print(f"[ERROR] ❌ Frecuencia de escaneo no válida: {frecuencia_minutos}")
 
-        elif configuracion_activa.tipo_escaneo_id == 2:  # Tipo "Hora específica"
-            hora_especifica = configuracion_activa.hora_especifica
+        elif configuracion_activa.tipo_escaneo_id == 2:  # Tipo "Escaneo en Horas Específicas"
+            # 🔹 Obtener lista de horas asociadas
+            horas_escaneo = configuracion_activa.horas_escaneo
+            if not horas_escaneo:
+                print("[ERROR] ❌ No hay horas definidas para este escaneo. No se programará nada.")
+                return
 
-            if isinstance(hora_especifica, datetime):  
-                # ✅ Si es un objeto datetime, extraer valores correctamente
-                hora = hora_especifica.hour
-                minuto = hora_especifica.minute
-                segundo = hora_especifica.second
-            else:
-                try:
-                    # ✅ Si es string, convertir a enteros con validación
-                    partes_hora = str(hora_especifica).split(":")
-                    
-                    if len(partes_hora) == 2:  # Formato HH:MM (sin segundos)
-                        hora, minuto = map(int, partes_hora)
-                        segundo = 0  # Asignar segundos en 0
-                    elif len(partes_hora) == 3:  # Formato HH:MM:SS
-                        hora, minuto, segundo = map(int, partes_hora)
-                    else:
-                        raise ValueError("Formato incorrecto. Debe ser HH:MM o HH:MM:SS")
-
-                except ValueError:
-                    print(f"[ERROR] ❌ Formato inválido en 'hora_especifica': {hora_especifica}")
-                    return
-
-            # ✅ Agregar la tarea al scheduler
-            scheduler.add_job(
-                ejecutar_escaneo_programado,
-                'cron',
-                hour=hora,
-                minute=minuto,
-                second=segundo,
-                id='escaneo_programado',
-                replace_existing=True
-            )
-            print(f"[INFO] ✅ Escaneo programado a las {hora}:{minuto}:{segundo} todos los días.")
+            for hora_obj in horas_escaneo:
+                h, m, s = map(int, str(hora_obj.hora).split(":"))
+                scheduler.add_job(
+                    ejecutar_escaneo_programado,
+                    'cron',
+                    hour=h,
+                    minute=m,
+                    second=s
+                )
+                print(f"[INFO] ✅ Escaneo programado a las {hora_obj.hora}.")
 
         print(f"[DEBUG] 📋 Tareas programadas: {scheduler.get_jobs()}")
 
     finally:
         db_sesion.close()
-
-
 
 
 def iniciar_programador():
@@ -156,6 +128,7 @@ def iniciar_programador():
     print("[INFO] ✅ Programador de tareas iniciado.")
 
     # 🔄 Forzar ejecución de prueba en 10 segundos
+    """
     print("[INFO] 🔄 Forzando ejecución de prueba en 10 segundos...")
     scheduler.add_job(
         ejecutar_escaneo_programado,
@@ -163,16 +136,16 @@ def iniciar_programador():
         run_date=datetime.now(),
         id="test_run"
     )
-
+     """
+    
     # 🔄 Monitorear cambios cada 30 segundos
     def monitor_configuracion():
         """
-        🔄 Monitorear cambios en la configuración y evitar que el programador se detenga.
+        🔄 Revisar cambios en la configuración y evitar que el programador se detenga.
         """
         while True:
             time.sleep(30)
             print("[INFO] 🔄 Revisando cambios en la configuración de escaneo...")
-
             programar_escaneo()
 
             # 🟢 Verificar si el programador sigue activo
@@ -187,6 +160,5 @@ def iniciar_programador():
 
             print(f"[DEBUG] 🟢 Estado del programador: {scheduler.running}")
             print(f"[DEBUG] 📋 Tareas programadas actualmente: {scheduler.get_jobs()}")
-
 
     threading.Thread(target=monitor_configuracion, daemon=True).start()

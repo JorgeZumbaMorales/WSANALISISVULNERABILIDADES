@@ -4,7 +4,8 @@ from app.core.base_datos import obtener_bd
 from app.servicios.configuracion_escaneos_servicio import (
     crear_configuracion_escaneo, obtener_configuracion_escaneo,
     actualizar_configuracion_escaneo, listar_configuraciones_escaneo,
-    eliminar_configuracion_escaneo, activar_configuracion_escaneo
+    eliminar_configuracion_escaneo, activar_configuracion_escaneo, listar_configuraciones_frecuencia,
+    listar_configuraciones_horas
 )
 from app.esquemas.configuracion_escaneos_esquemas import (
     ConfiguracionEscaneoCrear, ConfiguracionEscaneoActualizar, ConfiguracionEscaneoActualizarEstado
@@ -71,3 +72,16 @@ def listar_configuraciones_escaneo_endpoint(db: Session = Depends(obtener_bd)):
 def eliminar_configuracion_escaneo_endpoint(configuracion_id: int, db: Session = Depends(obtener_bd)):
     resultado = eliminar_configuracion_escaneo(configuracion_id, db)
     return {"mensaje": "Configuración de escaneo eliminada exitosamente"}
+
+## ✅ 1️⃣ LISTAR CONFIGURACIONES DE FRECUENCIA
+@router.get("/listar_configuraciones_frecuencia")
+def listar_configuraciones_frecuencia_endpoint(db: Session = Depends(obtener_bd)):
+    resultado = listar_configuraciones_frecuencia(db)
+    return {"mensaje": "Lista de configuraciones de escaneo por frecuencia obtenida exitosamente", "data": resultado}
+
+## ✅ 2️⃣ LISTAR CONFIGURACIONES POR HORAS
+@router.get("/listar_configuraciones_horas")
+def listar_configuraciones_horas_endpoint(db: Session = Depends(obtener_bd)):
+    resultado = listar_configuraciones_horas(db)
+    return {"mensaje": "Lista de configuraciones de escaneo por horas obtenida exitosamente", "data": resultado}
+
