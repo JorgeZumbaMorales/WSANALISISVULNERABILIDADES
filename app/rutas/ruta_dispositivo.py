@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.core.base_datos import obtener_bd
-from app.transacciones.transaccion_dispositivo_sistema_operativo import transaccion_actualizar_dispositivo_con_so
+from app.transacciones.transaccion_dispositivo_sistema_operativo import transaccion_actualizar_dispositivo_con_so,transaccion_eliminar_dispositivo_completo
 from app.esquemas.dispositivo_esquemas import (
     DispositivoCrear, 
     DispositivoActualizar,
@@ -56,12 +56,10 @@ def actualizar_dispositivo_endpoint(dispositivo_id: int, datos_dispositivo: Disp
         "data": dispositivo_actualizado
     }
 
-
-
 @router.delete("/eliminar_dispositivo/{dispositivo_id}")
 def eliminar_dispositivo_endpoint(dispositivo_id: int, db: Session = Depends(obtener_bd)):
-    eliminar_dispositivo(dispositivo_id, db)
-    return {"message": "Dispositivo eliminado exitosamente"}
+    return transaccion_eliminar_dispositivo_completo(dispositivo_id, db)
+
 
 @router.get("/riesgo/{nivel_riesgo}")
 def listar_dispositivos_riesgo_endpoint(nivel_riesgo: str, db: Session = Depends(obtener_bd)):

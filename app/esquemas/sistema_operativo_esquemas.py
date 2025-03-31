@@ -12,8 +12,14 @@ class SistemaOperativoActualizar(BaseModel):
 class SistemaOperativoRespuesta(BaseModel):
     sistema_operativo_id: int
     nombre_so: str
-    fecha_creacion: str
-    estado: bool
+
+
+    class Config:
+        from_attributes = True
+
+class SistemaOperativoBusqueda(BaseModel):
+    sistema_operativo_id: int
+    nombre_so: str
 
     class Config:
         from_attributes = True

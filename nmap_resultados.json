@@ -1,5 +1,92 @@
 [
     {
+        "ip_address": "192.168.1.1",
+        "mac_address": "60:83:E7:B9:CE:78",
+        "sistema_operativo": "No disponible",
+        "puertos_abiertos": [
+            {
+                "puerto": 22,
+                "protocolo": "tcp",
+                "servicio": "ssh",
+                "version": "Dropbear sshd 2020.80 (protocol 2.0)"
+            },
+            {
+                "puerto": 23,
+                "protocolo": "tcp",
+                "servicio": "telnet",
+                "version": "No disponible"
+            },
+            {
+                "puerto": 53,
+                "protocolo": "tcp",
+                "servicio": "domain",
+                "version": "dnsmasq 2.85"
+            },
+            {
+                "puerto": 80,
+                "protocolo": "tcp",
+                "servicio": "http",
+                "version": "No disponible"
+            },
+            {
+                "puerto": 1900,
+                "protocolo": "tcp",
+                "servicio": "upnp",
+                "version": "Portable SDK for UPnP devices 1.6.19 (Linux 3.18.21; UPnP 1.0)"
+            },
+            {
+                "puerto": 7547,
+                "protocolo": "tcp",
+                "servicio": "http",
+                "version": "TP-LINK TR-069 remote access"
+            },
+            {
+                "puerto": 8292,
+                "protocolo": "tcp",
+                "servicio": "blp3?",
+                "version": "No disponible"
+            }
+        ]
+    },
+    {
+        "ip_address": "192.168.1.3",
+        "mac_address": "F0:0F:EC:28:43:5B",
+        "sistema_operativo": "No disponible",
+        "puertos_abiertos": [
+            {
+                "puerto": 62110,
+                "protocolo": "tcp",
+                "servicio": "unknown",
+                "version": "No disponible"
+            }
+        ]
+    },
+    {
+        "ip_address": "192.168.1.6",
+        "mac_address": "5A:B1:FD:96:C5:45",
+        "sistema_operativo": "Linux 2.4.21",
+        "puertos_abiertos": [
+            {
+                "puerto": 12387,
+                "protocolo": "tcp",
+                "servicio": "tcpwrapped",
+                "version": "No disponible"
+            },
+            {
+                "puerto": 39405,
+                "protocolo": "tcp",
+                "servicio": "unknown",
+                "version": "No disponible"
+            },
+            {
+                "puerto": 55231,
+                "protocolo": "tcp",
+                "servicio": "unknown",
+                "version": "No disponible"
+            }
+        ]
+    },
+    {
         "ip_address": "192.168.1.2",
         "mac_address": "No disponible",
         "sistema_operativo": "Linux 2.6.32",

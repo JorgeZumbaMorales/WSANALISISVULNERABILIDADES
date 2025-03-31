@@ -43,3 +43,13 @@ def obtener_sistema_operativo_por_nombre(db: Session, nombre_so: str):
     Si no existe, devuelve `None`.
     """
     return db.query(SistemaOperativo).filter(SistemaOperativo.nombre_so.ilike(nombre_so)).first()
+
+def buscar_sistemas_operativos_por_nombre(nombre: str, db: Session):
+    """
+    🔍 Busca sistemas operativos cuyo nombre contenga el texto proporcionado (insensible a mayúsculas).
+    Devuelve un máximo de 30 resultados.
+    """
+    return db.query(SistemaOperativo)\
+             .filter(SistemaOperativo.nombre_so.ilike(f"%{nombre}%"))\
+             .limit(30)\
+             .all()
