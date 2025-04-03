@@ -54,6 +54,12 @@
         "sistema_operativo": "No disponible",
         "puertos_abiertos": [
             {
+                "puerto": 12387,
+                "protocolo": "tcp",
+                "servicio": "unknown",
+                "version": "No disponible"
+            },
+            {
                 "puerto": 62110,
                 "protocolo": "tcp",
                 "servicio": "unknown",
@@ -62,24 +68,31 @@
         ]
     },
     {
-        "ip_address": "192.168.1.6",
-        "mac_address": "5A:B1:FD:96:C5:45",
+        "ip_address": "192.168.1.5",
+        "mac_address": "10:3D:0A:32:E5:38",
+        "sistema_operativo": "Amazon Kindle Paperwhite, CyanogenMod 12 (Android 5.0.2)",
+        "puertos_abiertos": [
+            {
+                "puerto": 6466,
+                "protocolo": "tcp",
+                "servicio": "ssl/unknown",
+                "version": "No disponible"
+            },
+            {
+                "puerto": 9080,
+                "protocolo": "tcp",
+                "servicio": "glrpc?",
+                "version": "No disponible"
+            }
+        ]
+    },
+    {
+        "ip_address": "192.168.1.8",
+        "mac_address": "FA:5C:B3:D7:EF:FE",
         "sistema_operativo": "Linux 2.4.21",
         "puertos_abiertos": [
             {
                 "puerto": 12387,
-                "protocolo": "tcp",
-                "servicio": "tcpwrapped",
-                "version": "No disponible"
-            },
-            {
-                "puerto": 39405,
-                "protocolo": "tcp",
-                "servicio": "unknown",
-                "version": "No disponible"
-            },
-            {
-                "puerto": 55231,
                 "protocolo": "tcp",
                 "servicio": "unknown",
                 "version": "No disponible"

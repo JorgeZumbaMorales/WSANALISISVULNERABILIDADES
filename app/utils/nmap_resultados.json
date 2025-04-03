@@ -49,6 +49,50 @@
         ]
     },
     {
+        "ip_address": "192.168.1.3",
+        "mac_address": "F0:0F:EC:28:43:5B",
+        "sistema_operativo": "No disponible",
+        "puertos_abiertos": [
+            {
+                "puerto": 12388,
+                "protocolo": "tcp",
+                "servicio": "unknown",
+                "version": "No disponible"
+            },
+            {
+                "puerto": 62110,
+                "protocolo": "tcp",
+                "servicio": "tcpwrapped",
+                "version": "No disponible"
+            }
+        ]
+    },
+    {
+        "ip_address": "192.168.1.5",
+        "mac_address": "10:3D:0A:32:E5:38",
+        "sistema_operativo": "CyanogenMod 12 (Android 5.0.2)",
+        "puertos_abiertos": [
+            {
+                "puerto": 6466,
+                "protocolo": "tcp",
+                "servicio": "ssl/unknown",
+                "version": "No disponible"
+            },
+            {
+                "puerto": 6467,
+                "protocolo": "tcp",
+                "servicio": "ssl/unknown",
+                "version": "No disponible"
+            },
+            {
+                "puerto": 9080,
+                "protocolo": "tcp",
+                "servicio": "glrpc?",
+                "version": "No disponible"
+            }
+        ]
+    },
+    {
         "ip_address": "192.168.1.2",
         "mac_address": "No disponible",
         "sistema_operativo": "Linux 2.6.32",

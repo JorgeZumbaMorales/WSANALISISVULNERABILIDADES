@@ -1,17 +1,15 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
+from typing import List
 from app.core.base_datos import obtener_bd
-from app.core.respuestas import respuesta_exitosa
 from app.esquemas.vulnerabilidad_esquemas import (
     VulnerabilidadCrear,
-    VulnerabilidadActualizar,
-    VulnerabilidadActualizarEstado
+    VulnerabilidadActualizar
 )
 from app.servicios.vulnerabilidad_servicio import (
     crear_vulnerabilidad,
     listar_vulnerabilidades,
     actualizar_vulnerabilidad,
-    actualizar_estado_vulnerabilidad,
     eliminar_vulnerabilidad
 )
 
@@ -20,26 +18,22 @@ router = APIRouter(
     tags=["Vulnerabilidades"]
 )
 
-@router.post("/crear_vulnerabilidad")
+@router.post("/crear")
 def crear_vulnerabilidad_endpoint(datos: VulnerabilidadCrear, db: Session = Depends(obtener_bd)):
-    vulnerabilidad = crear_vulnerabilidad(datos, db)
-    return respuesta_exitosa("Vulnerabilidad creada exitosamente", vulnerabilidad)
+    resultado = crear_vulnerabilidad(datos, db)
+    return {"message": "Vulnerabilidad registrada correctamente", "data": resultado}
 
-@router.get("/listar_vulnerabilidades")
+@router.get("/listar")
 def listar_vulnerabilidades_endpoint(db: Session = Depends(obtener_bd)):
-    vulnerabilidades = listar_vulnerabilidades(db)
-    return respuesta_exitosa("Lista de vulnerabilidades obtenida exitosamente", vulnerabilidades)
+    datos = listar_vulnerabilidades(db)
+    return {"message": "Lista de vulnerabilidades", "data": datos}
 
-@router.put("/actualizar_vulnerabilidad/{vulnerabilidad_id}")
-def actualizar_vulnerabilidad_endpoint(vulnerabilidad_id: int, datos: VulnerabilidadActualizar, db: Session = Depends(obtener_bd)):
-    vulnerabilidad = actualizar_vulnerabilidad(vulnerabilidad_id, datos, db)
-    return respuesta_exitosa("Vulnerabilidad actualizada exitosamente", vulnerabilidad)
+@router.put("/actualizar/{vuln_id}")
+def actualizar_vulnerabilidad_endpoint(vuln_id: int, datos: VulnerabilidadActualizar, db: Session = Depends(obtener_bd)):
+    actualizada = actualizar_vulnerabilidad(vuln_id, datos, db)
+    return {"message": "Vulnerabilidad actualizada", "data": actualizada}
 
-@router.put("/actualizar_estado_vulnerabilidad/{vulnerabilidad_id}")
-def actualizar_estado_vulnerabilidad_endpoint(vulnerabilidad_id: int, datos: VulnerabilidadActualizarEstado, db: Session = Depends(obtener_bd)):
-    vulnerabilidad = actualizar_estado_vulnerabilidad(vulnerabilidad_id, datos.estado, db)
-    return respuesta_exitosa("Estado de la vulnerabilidad actualizado exitosamente", vulnerabilidad)
-
-@router.delete("/eliminar_vulnerabilidad/{vulnerabilidad_id}")
-def eliminar_vulnerabilidad_endpoint(vulnerabilidad_id: int, db: Session = Depends(obtener_bd)):
-    return eliminar_vulnerabilidad(vulnerabilidad_id, db)
+@router.delete("/eliminar/{vuln_id}")
+def eliminar_vulnerabilidad_endpoint(vuln_id: int, db: Session = Depends(obtener_bd)):
+    eliminar_vulnerabilidad(vuln_id, db)
+    return {"message": "Vulnerabilidad eliminada"}

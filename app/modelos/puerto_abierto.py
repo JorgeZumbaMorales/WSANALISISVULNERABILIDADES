@@ -18,3 +18,5 @@ class PuertoAbierto(Base):
 
     # Relación con RecomendacionPuerto
     recomendaciones = relationship("RecomendacionPuerto", back_populates="puerto", lazy="joined", cascade="all, delete-orphan", uselist=True)
+    # Relación con PuertoVulnerabilidad
+    vulnerabilidades = relationship("PuertoVulnerabilidad", back_populates="puerto", lazy="joined", cascade="all, delete-orphan", uselist=True)

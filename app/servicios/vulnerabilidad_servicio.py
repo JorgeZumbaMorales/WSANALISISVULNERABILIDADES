@@ -1,55 +1,62 @@
 from sqlalchemy.orm import Session
+from fastapi import HTTPException
 from app.modelos.vulnerabilidad import Vulnerabilidad
 from app.esquemas.vulnerabilidad_esquemas import (
     VulnerabilidadCrear,
     VulnerabilidadActualizar
 )
-from app.core.respuestas import excepcion_no_encontrado, respuesta_exitosa
 
 def crear_vulnerabilidad(datos: VulnerabilidadCrear, db: Session):
-    nueva_vulnerabilidad = Vulnerabilidad(
-        dispositivo_id=datos.dispositivo_id,
-        tipo=datos.tipo,
-        severidad=datos.severidad,
-        descripcion=datos.descripcion,
-        fecha_deteccion=datos.fecha_deteccion
+    existente = db.query(Vulnerabilidad).filter(Vulnerabilidad.cve_id == datos.cve_id).first()
+    if existente:
+        # Si existe, actualiza si cambia algo
+        actualizado = False
+        if datos.score is not None and existente.score != datos.score:
+            existente.score = datos.score
+            actualizado = True
+        if datos.url and existente.url != datos.url:
+            existente.url = datos.url
+            actualizado = True
+        if datos.estado is not None and existente.estado != datos.estado:
+            existente.estado = datos.estado
+            actualizado = True
+
+        if actualizado:
+            db.commit()
+            db.refresh(existente)
+        return existente
+
+    nueva = Vulnerabilidad(
+        cve_id=datos.cve_id,
+        score=datos.score,
+        url=datos.url,
+        estado=datos.estado
     )
-    db.add(nueva_vulnerabilidad)
+    db.add(nueva)
     db.commit()
-    db.refresh(nueva_vulnerabilidad)
-    return nueva_vulnerabilidad
+    db.refresh(nueva)
+    return nueva
 
 def listar_vulnerabilidades(db: Session):
     return db.query(Vulnerabilidad).all()
 
-def actualizar_vulnerabilidad(vulnerabilidad_id: int, datos: VulnerabilidadActualizar, db: Session):
-    vulnerabilidad = db.query(Vulnerabilidad).filter(Vulnerabilidad.vulnerabilidad_id == vulnerabilidad_id).first()
+def actualizar_vulnerabilidad(vuln_id: int, datos: VulnerabilidadActualizar, db: Session):
+    vulnerabilidad = db.query(Vulnerabilidad).filter(Vulnerabilidad.vulnerabilidad_id == vuln_id).first()
     if not vulnerabilidad:
-        excepcion_no_encontrado("Vulnerabilidad")
+        raise HTTPException(status_code=404, detail="Vulnerabilidad no encontrada")
 
-    vulnerabilidad.tipo = datos.tipo
-    vulnerabilidad.severidad = datos.severidad
-    vulnerabilidad.descripcion = datos.descripcion
+    for key, value in datos.dict(exclude_unset=True).items():
+        setattr(vulnerabilidad, key, value)
 
     db.commit()
     db.refresh(vulnerabilidad)
     return vulnerabilidad
 
-def actualizar_estado_vulnerabilidad(vulnerabilidad_id: int, estado: bool, db: Session):
-    vulnerabilidad = db.query(Vulnerabilidad).filter(Vulnerabilidad.vulnerabilidad_id == vulnerabilidad_id).first()
+def eliminar_vulnerabilidad(vuln_id: int, db: Session):
+    vulnerabilidad = db.query(Vulnerabilidad).filter(Vulnerabilidad.vulnerabilidad_id == vuln_id).first()
     if not vulnerabilidad:
-        excepcion_no_encontrado("Vulnerabilidad")
-
-    vulnerabilidad.estado = estado
-    db.commit()
-    db.refresh(vulnerabilidad)
-    return vulnerabilidad
-
-def eliminar_vulnerabilidad(vulnerabilidad_id: int, db: Session):
-    vulnerabilidad = db.query(Vulnerabilidad).filter(Vulnerabilidad.vulnerabilidad_id == vulnerabilidad_id).first()
-    if not vulnerabilidad:
-        excepcion_no_encontrado("Vulnerabilidad")
+        raise HTTPException(status_code=404, detail="Vulnerabilidad no encontrada")
 
     db.delete(vulnerabilidad)
     db.commit()
-    return respuesta_exitosa("Vulnerabilidad eliminada exitosamente")
+    return {"message": "Vulnerabilidad eliminada correctamente"}

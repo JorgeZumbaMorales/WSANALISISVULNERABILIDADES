@@ -9,6 +9,10 @@ from .sistema_operativo import SistemaOperativo
 from .recomendacion_puerto import RecomendacionPuerto
 from .configuracion_horas_escaneo import ConfiguracionHorasEscaneo
 from .configuracion_escaneo import ConfiguracionEscaneo
+from .vulnerabilidad import Vulnerabilidad
+from .puerto_vulnerabilidad import PuertoVulnerabilidad
+
+
 __all__ = [
     "Usuario",
     "Dispositivo",
@@ -21,4 +25,6 @@ __all__ = [
     "RecomendacionPuerto",
     "ConfiguracionEscaneo",
     "ConfiguracionHorasEscaneo",  
+    "Vulnerabilidad",
+    "PuertoVulnerabilidad" 
 ]

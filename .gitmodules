@@ -1,0 +1,3 @@
+[submodule "app/utils/nmap/nmap-vulners"]
+	path = app/utils/nmap/nmap-vulners
+	url = https://github.com/vulnersCom/nmap-vulners.git
